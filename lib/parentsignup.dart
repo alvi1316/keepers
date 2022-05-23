@@ -7,51 +7,116 @@ class ParentSignup extends StatefulWidget {
 }
 
 class _ParentSignupState extends State<ParentSignup> {
-  int _count = 1;
-  List<Widget> childList = [
-    SizedBox(
-      width: 290,
-      child: TextField(
-        textAlign: TextAlign.center,
-        decoration: InputDecoration(
-          filled: true,
-          fillColor: Colors.white,
-          hintText: "Name of child",
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(50),
-          ),
-        ),
-      ),
-    ),
-    SizedBox(
-      height: 20,
-    ),
-    SizedBox(
-      width: 290,
-      child: TextField(
-        keyboardType: TextInputType.number,
-        textAlign: TextAlign.center,
-        decoration: InputDecoration(
-          filled: true,
-          fillColor: Colors.white,
-          hintText: "Age",
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(50),
-          ),
-        ),
-      ),
-    ),
-    SizedBox(
-      height: 20,
-    ),
+  final TextEditingController nameCtrl = TextEditingController();
+  final TextEditingController nidCtrl = TextEditingController();
+  final TextEditingController phoneCtrl = TextEditingController();
+  final TextEditingController passCtrl = TextEditingController();
+  final GlobalKey<FormState> formCtrl = GlobalKey<FormState>();
+
+  List<TextEditingController> childCtrl = [
+    TextEditingController(),
+    TextEditingController()
   ];
+
+  List<Widget> childList = [];
+
+  _ParentSignupState() {
+    childList.add(
+      SizedBox(
+        width: 290,
+        child: TextFormField(
+          controller: childCtrl.elementAt(0),
+          validator: (value) {
+            var reg = RegExp(r"^([A-Za-z ])+$");
+            if (value == null) {
+              return "Cannot be empty";
+            } else if (value == "") {
+              return "Cannot be empty";
+            } else if (reg.hasMatch(value)) {
+              return null;
+            } else {
+              return "Provide valid name!";
+            }
+          },
+          textAlign: TextAlign.center,
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: Colors.white,
+            hintText: "Name of child",
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(50),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    childList.add(
+      SizedBox(
+        height: 20,
+      ),
+    );
+    childList.add(
+      SizedBox(
+        width: 290,
+        child: TextFormField(
+          controller: childCtrl.elementAt(1),
+          validator: (value) {
+            var reg = RegExp(r"^([0-9]){1,3}$");
+            if (value == null) {
+              return "Cannot be empty";
+            } else if (value == "") {
+              return "Cannot be empty";
+            } else if (reg.hasMatch(value)) {
+              return null;
+            } else {
+              return "Provide valid Age!";
+            }
+          },
+          keyboardType: TextInputType.number,
+          textAlign: TextAlign.center,
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: Colors.white,
+            hintText: "Age",
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(50),
+            ),
+          ),
+        ),
+      ),
+    );
+    childList.add(
+      SizedBox(
+        height: 20,
+      ),
+    );
+  }
+
+  int _count = 1;
+
   void countCallback(count) {
     setState(() {
       if (count > _count) {
+        childCtrl.add(TextEditingController());
+
         childList.add(
           SizedBox(
             width: 290,
-            child: TextField(
+            child: TextFormField(
+              controller: childCtrl.last,
+              validator: (value) {
+                var reg = RegExp(r"^([A-Za-z ])+$");
+                if (value == null) {
+                  return "Cannot be empty";
+                } else if (value == "") {
+                  return "Cannot be empty";
+                } else if (reg.hasMatch(value)) {
+                  return null;
+                } else {
+                  return "Provide valid name!";
+                }
+              },
               textAlign: TextAlign.center,
               decoration: InputDecoration(
                 filled: true,
@@ -69,10 +134,24 @@ class _ParentSignupState extends State<ParentSignup> {
             height: 20,
           ),
         );
+        childCtrl.add(TextEditingController());
         childList.add(
           SizedBox(
             width: 290,
-            child: TextField(
+            child: TextFormField(
+              controller: childCtrl.last,
+              validator: (value) {
+                var reg = RegExp(r"^([0-9]){1,3}$");
+                if (value == null) {
+                  return "Cannot be empty";
+                } else if (value == "") {
+                  return "Cannot be empty";
+                } else if (reg.hasMatch(value)) {
+                  return null;
+                } else {
+                  return "Provide valid Age!";
+                }
+              },
               keyboardType: TextInputType.number,
               textAlign: TextAlign.center,
               decoration: InputDecoration(
@@ -96,6 +175,8 @@ class _ParentSignupState extends State<ParentSignup> {
         childList.removeLast();
         childList.removeLast();
         childList.removeLast();
+        childCtrl.removeLast();
+        childCtrl.removeLast();
       }
       _count = count;
     });
@@ -113,6 +194,9 @@ class _ParentSignupState extends State<ParentSignup> {
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
+                  SizedBox(
+                    height: 70,
+                  ),
                   Text(
                     "Parent Signup",
                     style: TextStyle(
@@ -124,11 +208,25 @@ class _ParentSignupState extends State<ParentSignup> {
                     height: 20,
                   ),
                   Form(
+                    key: formCtrl,
                     child: Column(
                       children: [
                         SizedBox(
                           width: 290,
-                          child: TextField(
+                          child: TextFormField(
+                            controller: nameCtrl,
+                            validator: (value) {
+                              var reg = RegExp(r"^([A-Za-z ])+$");
+                              if (value == null) {
+                                return "Cannot be empty";
+                              } else if (value == "") {
+                                return "Cannot be empty";
+                              } else if (reg.hasMatch(value)) {
+                                return null;
+                              } else {
+                                return "Provide valid name!";
+                              }
+                            },
                             textAlign: TextAlign.center,
                             decoration: InputDecoration(
                               filled: true,
@@ -145,7 +243,20 @@ class _ParentSignupState extends State<ParentSignup> {
                         ),
                         SizedBox(
                           width: 290,
-                          child: TextField(
+                          child: TextFormField(
+                            controller: nidCtrl,
+                            validator: (value) {
+                              var reg = RegExp(r"^([0-9]){13}$");
+                              if (value == null) {
+                                return "Cannot be empty";
+                              } else if (value == "") {
+                                return "Cannot be empty";
+                              } else if (reg.hasMatch(value)) {
+                                return null;
+                              } else {
+                                return "Provide valid NID!";
+                              }
+                            },
                             keyboardType: TextInputType.number,
                             textAlign: TextAlign.center,
                             decoration: InputDecoration(
@@ -163,7 +274,20 @@ class _ParentSignupState extends State<ParentSignup> {
                         ),
                         SizedBox(
                           width: 290,
-                          child: TextField(
+                          child: TextFormField(
+                            controller: phoneCtrl,
+                            validator: (value) {
+                              var reg = RegExp(r"01([0-9]){9}$");
+                              if (value == null) {
+                                return "Cannot be empty";
+                              } else if (value == "") {
+                                return "Cannot be empty";
+                              } else if (reg.hasMatch(value)) {
+                                return null;
+                              } else {
+                                return "Provide valid Phone Number!";
+                              }
+                            },
                             keyboardType: TextInputType.number,
                             textAlign: TextAlign.center,
                             decoration: InputDecoration(
@@ -181,7 +305,20 @@ class _ParentSignupState extends State<ParentSignup> {
                         ),
                         SizedBox(
                           width: 290,
-                          child: TextField(
+                          child: TextFormField(
+                            controller: passCtrl,
+                            validator: (value) {
+                              var reg = RegExp(r"^([A-Za-z0-9]){8,}$");
+                              if (value == null) {
+                                return "Cannot be empty";
+                              } else if (value == "") {
+                                return "Cannot be empty";
+                              } else if (reg.hasMatch(value)) {
+                                return null;
+                              } else {
+                                return "8 or more character alpha numaric!";
+                              }
+                            },
                             obscureText: true,
                             textAlign: TextAlign.center,
                             decoration: InputDecoration(
@@ -203,7 +340,15 @@ class _ParentSignupState extends State<ParentSignup> {
                         ),
                         Column(children: childList),
                         ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            if (formCtrl.currentState!.validate()) {
+                              childCtrl.forEach(
+                                (element) {
+                                  print(element.text);
+                                },
+                              );
+                            }
+                          },
                           style: ElevatedButton.styleFrom(
                               minimumSize: Size(150, 40),
                               shape: RoundedRectangleBorder(

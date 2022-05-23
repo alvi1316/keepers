@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
 class SitterLogin extends StatelessWidget {
+  final TextEditingController phoneCtrl = TextEditingController();
+  final TextEditingController passCtrl = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,6 +30,7 @@ class SitterLogin extends StatelessWidget {
                   SizedBox(
                     width: 290,
                     child: TextField(
+                      controller: phoneCtrl,
                       keyboardType: TextInputType.number,
                       textAlign: TextAlign.center,
                       decoration: InputDecoration(
@@ -45,6 +49,7 @@ class SitterLogin extends StatelessWidget {
                   SizedBox(
                     width: 290,
                     child: TextField(
+                      controller: passCtrl,
                       obscureText: true,
                       textAlign: TextAlign.center,
                       decoration: InputDecoration(
@@ -62,7 +67,10 @@ class SitterLogin extends StatelessWidget {
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, '/sitterprofile');
+                      //todo
+                      print(phoneCtrl.text);
+                      print(passCtrl.text);
+                      //Navigator.pushNamed(context, '/sitterprofile');
                     },
                     style: ElevatedButton.styleFrom(
                         minimumSize: Size(150, 40),

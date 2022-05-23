@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 
 class SitterSignup extends StatelessWidget {
+  var nameCtrl = TextEditingController();
+  var nidCtrl = TextEditingController();
+  var phoneCtrl = TextEditingController();
+  var passCtrl = TextEditingController();
+  var formCtrl = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,13 +30,28 @@ class SitterSignup extends StatelessWidget {
                     height: 20,
                   ),
                   Form(
+                    key: formCtrl,
                     child: Column(
                       children: [
                         SizedBox(
                           width: 290,
-                          child: TextField(
+                          child: TextFormField(
+                            controller: nameCtrl,
+                            validator: (value) {
+                              var reg = RegExp(r"^([A-Za-z ])+$");
+                              if (value == null) {
+                                return "Cannot be empty";
+                              } else if (value == "") {
+                                return "Cannot be empty";
+                              } else if (reg.hasMatch(value)) {
+                                return null;
+                              } else {
+                                return "Provide valid name!";
+                              }
+                            },
                             textAlign: TextAlign.center,
                             decoration: InputDecoration(
+                              errorStyle: TextStyle(color: Colors.white),
                               filled: true,
                               fillColor: Colors.white,
                               hintText: "Name",
@@ -45,10 +66,24 @@ class SitterSignup extends StatelessWidget {
                         ),
                         SizedBox(
                           width: 290,
-                          child: TextField(
+                          child: TextFormField(
+                            controller: nidCtrl,
+                            validator: (value) {
+                              var reg = RegExp(r"^([0-9]){13}$");
+                              if (value == null) {
+                                return "Cannot be empty";
+                              } else if (value == "") {
+                                return "Cannot be empty";
+                              } else if (reg.hasMatch(value)) {
+                                return null;
+                              } else {
+                                return "Provide valid NID!";
+                              }
+                            },
                             keyboardType: TextInputType.number,
                             textAlign: TextAlign.center,
                             decoration: InputDecoration(
+                              errorStyle: TextStyle(color: Colors.white),
                               filled: true,
                               fillColor: Colors.white,
                               hintText: "Nid",
@@ -63,10 +98,24 @@ class SitterSignup extends StatelessWidget {
                         ),
                         SizedBox(
                           width: 290,
-                          child: TextField(
+                          child: TextFormField(
+                            controller: phoneCtrl,
+                            validator: (value) {
+                              var reg = RegExp(r"01([0-9]){9}$");
+                              if (value == null) {
+                                return "Cannot be empty";
+                              } else if (value == "") {
+                                return "Cannot be empty";
+                              } else if (reg.hasMatch(value)) {
+                                return null;
+                              } else {
+                                return "Provide valid Phone Number!";
+                              }
+                            },
                             keyboardType: TextInputType.number,
                             textAlign: TextAlign.center,
                             decoration: InputDecoration(
+                              errorStyle: TextStyle(color: Colors.white),
                               filled: true,
                               fillColor: Colors.white,
                               hintText: "Phone",
@@ -81,10 +130,24 @@ class SitterSignup extends StatelessWidget {
                         ),
                         SizedBox(
                           width: 290,
-                          child: TextField(
+                          child: TextFormField(
+                            controller: passCtrl,
+                            validator: (value) {
+                              var reg = RegExp(r"^([A-Za-z0-9]){8,}$");
+                              if (value == null) {
+                                return "Cannot be empty";
+                              } else if (value == "") {
+                                return "Cannot be empty";
+                              } else if (reg.hasMatch(value)) {
+                                return null;
+                              } else {
+                                return "8 or more character alpha numaric!";
+                              }
+                            },
                             obscureText: true,
                             textAlign: TextAlign.center,
                             decoration: InputDecoration(
+                              errorStyle: TextStyle(color: Colors.white),
                               filled: true,
                               fillColor: Colors.white,
                               hintText: "Password",
@@ -98,7 +161,11 @@ class SitterSignup extends StatelessWidget {
                           height: 20,
                         ),
                         ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            if (formCtrl.currentState!.validate()) {
+                              //todo
+                            }
+                          },
                           style: ElevatedButton.styleFrom(
                               minimumSize: Size(150, 40),
                               shape: RoundedRectangleBorder(
