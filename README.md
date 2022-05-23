@@ -1,4 +1,4 @@
 # keeper
 
 ### Features
-- This is a mobile application works 
+- This is a mobile application
