@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:keeper/database/database.dart';
 
 class SitterLogin extends StatelessWidget {
   final TextEditingController phoneCtrl = TextEditingController();
@@ -66,10 +67,13 @@ class SitterLogin extends StatelessWidget {
                     height: 20,
                   ),
                   ElevatedButton(
-                    onPressed: () {
-                      //todo
-                      print(phoneCtrl.text);
-                      print(passCtrl.text);
+                    onPressed: () async {
+                      var db = Database();
+                      if (await db.loginSitter(phoneCtrl.text, passCtrl.text)) {
+                        print("Success!");
+                      } else {
+                        print("Failed!");
+                      }
                       //Navigator.pushNamed(context, '/sitterprofile');
                     },
                     style: ElevatedButton.styleFrom(

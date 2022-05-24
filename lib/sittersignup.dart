@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:keeper/database/database.dart';
 
 class SitterSignup extends StatelessWidget {
-  var nameCtrl = TextEditingController();
-  var nidCtrl = TextEditingController();
-  var phoneCtrl = TextEditingController();
-  var passCtrl = TextEditingController();
-  var formCtrl = GlobalKey<FormState>();
+  final TextEditingController nameCtrl = TextEditingController();
+  final TextEditingController nidCtrl = TextEditingController();
+  final TextEditingController phoneCtrl = TextEditingController();
+  final TextEditingController passCtrl = TextEditingController();
+  final GlobalKey<FormState> formCtrl = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -161,9 +162,25 @@ class SitterSignup extends StatelessWidget {
                           height: 20,
                         ),
                         ElevatedButton(
-                          onPressed: () {
+                          onPressed: () async {
                             if (formCtrl.currentState!.validate()) {
-                              //todo
+                              var db = Database();
+                              if (await db.fieldIsUnique(
+                                      "sitter", "phone", phoneCtrl.text) &&
+                                  await db.fieldIsUnique(
+                                      "sitter", "nid", nidCtrl.text)) {
+                                if (await db.signupSitter(
+                                    nameCtrl.text,
+                                    nidCtrl.text,
+                                    phoneCtrl.text,
+                                    passCtrl.text)) {
+                                  print("Success!");
+                                } else {
+                                  print("Failed!");
+                                }
+                              } else {
+                                print("Failed!");
+                              }
                             }
                           },
                           style: ElevatedButton.styleFrom(

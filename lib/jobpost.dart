@@ -3,12 +3,12 @@ import 'package:keeper/widgets/timepicker.dart';
 import 'package:keeper/widgets/weekday.dart';
 
 class JobPost extends StatelessWidget {
-  var children = [
+  final List<String> children = [
     'Child 1',
     'Child 2',
   ];
 
-  bool value = false;
+  final bool value = false;
 
   @override
   Widget build(BuildContext context) {

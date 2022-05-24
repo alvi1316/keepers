@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
 class ParentLogin extends StatelessWidget {
+  final TextEditingController phoneCtrl = TextEditingController();
+  final TextEditingController passCtrl = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,7 +29,8 @@ class ParentLogin extends StatelessWidget {
                 children: [
                   SizedBox(
                     width: 290,
-                    child: TextField(
+                    child: TextFormField(
+                      controller: phoneCtrl,
                       keyboardType: TextInputType.number,
                       textAlign: TextAlign.center,
                       decoration: InputDecoration(
@@ -44,7 +48,8 @@ class ParentLogin extends StatelessWidget {
                   ),
                   SizedBox(
                     width: 290,
-                    child: TextField(
+                    child: TextFormField(
+                      controller: passCtrl,
                       obscureText: true,
                       textAlign: TextAlign.center,
                       decoration: InputDecoration(
@@ -62,7 +67,10 @@ class ParentLogin extends StatelessWidget {
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, '/parentprofile');
+                      print(phoneCtrl.text);
+                      print(passCtrl.text);
+                      //todo
+                      //Navigator.pushNamed(context, '/parentprofile');
                     },
                     style: ElevatedButton.styleFrom(
                         minimumSize: Size(150, 40),

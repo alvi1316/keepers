@@ -342,11 +342,9 @@ class _ParentSignupState extends State<ParentSignup> {
                         ElevatedButton(
                           onPressed: () {
                             if (formCtrl.currentState!.validate()) {
-                              childCtrl.forEach(
-                                (element) {
-                                  print(element.text);
-                                },
-                              );
+                              for (var child in childCtrl) {
+                                print(child.text);
+                              }
                             }
                           },
                           style: ElevatedButton.styleFrom(
