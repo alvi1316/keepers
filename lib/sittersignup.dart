@@ -1,12 +1,22 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:keeper/database/database.dart';
+import 'package:keeper/models/sitter.dart';
 
-class SitterSignup extends StatelessWidget {
+class SitterSignup extends StatefulWidget {
+  @override
+  State<SitterSignup> createState() => _SitterSignupState();
+}
+
+class _SitterSignupState extends State<SitterSignup> {
   final TextEditingController nameCtrl = TextEditingController();
   final TextEditingController nidCtrl = TextEditingController();
   final TextEditingController phoneCtrl = TextEditingController();
   final TextEditingController passCtrl = TextEditingController();
   final GlobalKey<FormState> formCtrl = GlobalKey<FormState>();
+  bool error = false;
+  bool success = false;
 
   @override
   Widget build(BuildContext context) {
@@ -20,6 +30,38 @@ class SitterSignup extends StatelessWidget {
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
+                  if (error)
+                    Container(
+                      height: 30,
+                      width: 200,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(25),
+                        color: Colors.red[400],
+                      ),
+                      child: Text(
+                        "Failed!",
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  if (success)
+                    Container(
+                      height: 30,
+                      width: 200,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(25),
+                        color: Colors.white,
+                      ),
+                      child: Text(
+                        "Successful!",
+                      ),
+                    ),
+                  SizedBox(
+                    height: 20,
+                  ),
                   Text(
                     "Sitter Signup",
                     style: TextStyle(
@@ -165,20 +207,49 @@ class SitterSignup extends StatelessWidget {
                           onPressed: () async {
                             if (formCtrl.currentState!.validate()) {
                               var db = Database();
+                              var sitter = Sitter(
+                                name: nameCtrl.text,
+                                nid: nidCtrl.text,
+                                phone: phoneCtrl.text,
+                                password: passCtrl.text,
+                                rating: 0,
+                                approved: false,
+                                suspended: false,
+                              );
                               if (await db.fieldIsUnique(
                                       "sitter", "phone", phoneCtrl.text) &&
                                   await db.fieldIsUnique(
                                       "sitter", "nid", nidCtrl.text)) {
-                                if (await db.signupSitter(
-                                    nameCtrl.text,
-                                    nidCtrl.text,
-                                    phoneCtrl.text,
-                                    passCtrl.text)) {
+                                if (await db.signupSitter(sitter)) {
+                                  setState(() {
+                                    success = true;
+                                  });
+                                  Timer(Duration(seconds: 5), () {
+                                    setState(() {
+                                      success = false;
+                                    });
+                                  });
                                   print("Success!");
                                 } else {
+                                  setState(() {
+                                    error = true;
+                                  });
+                                  Timer(Duration(seconds: 5), () {
+                                    setState(() {
+                                      error = false;
+                                    });
+                                  });
                                   print("Failed!");
                                 }
                               } else {
+                                setState(() {
+                                  error = true;
+                                });
+                                Timer(Duration(seconds: 5), () {
+                                  setState(() {
+                                    error = false;
+                                  });
+                                });
                                 print("Failed!");
                               }
                             }

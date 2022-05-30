@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:keeper/home.dart';
+import 'package:keeper/initialpage.dart';
 import 'package:keeper/jobdetails.dart';
 import 'package:keeper/jobpost.dart';
 import 'package:keeper/parentlogin.dart';
@@ -27,7 +28,8 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/',
       routes: {
-        '/': (context) => Home(),
+        '/': (context) => InitialPage(),
+        '/home': (context) => Home(),
         '/sitterlogin': (context) => SitterLogin(),
         '/sittersignup': (context) => SitterSignup(),
         '/sitterprofile': (context) => SitterProfile(),

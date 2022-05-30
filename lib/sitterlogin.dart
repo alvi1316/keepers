@@ -1,9 +1,19 @@
-import 'package:flutter/material.dart';
-import 'package:keeper/database/database.dart';
+import 'dart:async';
 
-class SitterLogin extends StatelessWidget {
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:keeper/database/database.dart';
+import 'package:keeper/database/providers.dart';
+
+class SitterLogin extends ConsumerStatefulWidget {
+  @override
+  SitterLoginState createState() => SitterLoginState();
+}
+
+class SitterLoginState extends ConsumerState<SitterLogin> {
   final TextEditingController phoneCtrl = TextEditingController();
   final TextEditingController passCtrl = TextEditingController();
+  bool error = false;
 
   @override
   Widget build(BuildContext context) {
@@ -15,6 +25,25 @@ class SitterLogin extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            if (error)
+              Container(
+                height: 30,
+                width: 200,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(25),
+                  color: Colors.red[400],
+                ),
+                child: Text(
+                  "Wrong username or password!",
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            SizedBox(
+              height: 20,
+            ),
             Text(
               "Sitter Login",
               style: TextStyle(
@@ -68,13 +97,22 @@ class SitterLogin extends StatelessWidget {
                   ),
                   ElevatedButton(
                     onPressed: () async {
+                      var navigator = Navigator.of(context);
                       var db = Database();
                       if (await db.loginSitter(phoneCtrl.text, passCtrl.text)) {
-                        print("Success!");
+                        ref.read(sessionProvider).update();
+                        navigator.pop();
                       } else {
+                        setState(() {
+                          error = true;
+                        });
+                        Timer(Duration(seconds: 5), () {
+                          setState(() {
+                            error = false;
+                          });
+                        });
                         print("Failed!");
                       }
-                      //Navigator.pushNamed(context, '/sitterprofile');
                     },
                     style: ElevatedButton.styleFrom(
                         minimumSize: Size(150, 40),
