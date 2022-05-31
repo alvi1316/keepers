@@ -1,8 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:keeper/database/database.dart';
+import 'package:keeper/database/providers.dart';
+import 'package:keeper/models/parent.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class ParentProfile extends StatelessWidget {
+class ParentProfile extends ConsumerStatefulWidget {
+  @override
+  ParentProfileState createState() => ParentProfileState();
+}
+
+class ParentProfileState extends ConsumerState<ParentProfile> {
+  Parent parent = Parent();
   @override
   Widget build(BuildContext context) {
+    var session = ref.watch(sessionProvider);
+    var db = Database();
+    db.getParentDetails(session.phone).then(
+      (value) {
+        setState(() {
+          parent = value;
+        });
+      },
+    );
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.pink[800],
@@ -16,7 +36,7 @@ class ParentProfile extends StatelessWidget {
                 color: Colors.pink[800],
               ),
               child: Text(
-                'User Name',
+                session.name,
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 26,
@@ -53,7 +73,11 @@ class ParentProfile extends StatelessWidget {
                 borderRadius: BorderRadius.circular(25),
               ),
               title: Text('Logout'),
-              onTap: () {},
+              onTap: () async {
+                var pref = await SharedPreferences.getInstance();
+                pref.clear();
+                ref.read(sessionProvider).update();
+              },
             ),
           ],
         ),
@@ -104,7 +128,8 @@ class ParentProfile extends StatelessWidget {
                       ),
                       child: ListTile(
                         title: Text('Name'),
-                        subtitle: Text('Name of Parent'),
+                        subtitle:
+                            Text((parent.name == null) ? "" : parent.name!),
                       ),
                     ),
                     Card(
@@ -118,7 +143,7 @@ class ParentProfile extends StatelessWidget {
                       ),
                       child: ListTile(
                         title: Text('Nid'),
-                        subtitle: Text('0123456789012'),
+                        subtitle: Text((parent.nid == null) ? "" : parent.nid!),
                       ),
                     ),
                     Card(
@@ -132,7 +157,24 @@ class ParentProfile extends StatelessWidget {
                       ),
                       child: ListTile(
                         title: Text('Phone'),
-                        subtitle: Text('017XXXXXXXX'),
+                        subtitle:
+                            Text((parent.phone == null) ? "" : parent.phone!),
+                      ),
+                    ),
+                    Card(
+                      elevation: 5,
+                      shape: RoundedRectangleBorder(
+                        side: BorderSide(
+                          color: Colors.black,
+                        ),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(12)),
+                      ),
+                      child: ListTile(
+                        title: Text('Rating'),
+                        subtitle: Text((parent.rating == null)
+                            ? ""
+                            : parent.rating!.toString()),
                       ),
                     ),
                     Card(
@@ -146,7 +188,11 @@ class ParentProfile extends StatelessWidget {
                       ),
                       child: ListTile(
                         title: Text('No of child'),
-                        subtitle: Text('2'),
+                        subtitle: Text(
+                          (parent.numberOfChild == null)
+                              ? ""
+                              : parent.numberOfChild!.toString(),
+                        ),
                       ),
                     ),
                   ],
@@ -168,94 +214,58 @@ class ParentProfile extends StatelessWidget {
                   style: TextStyle(fontSize: 26),
                 ),
               ),
-              SizedBox(height: 10),
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(10),
-                  ),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+              Column(
+                  children: parent.childDetails!.entries.map((entry) {
+                return Column(
                   children: [
-                    SizedBox(height: 20),
-                    Card(
-                      elevation: 5,
-                      shape: RoundedRectangleBorder(
-                        side: BorderSide(
-                          color: Colors.black,
-                        ),
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(12)),
-                      ),
-                      child: ListTile(
-                        title: Text('Name'),
-                        subtitle: Text('Name of Child'),
-                      ),
+                    SizedBox(
+                      height: 10,
                     ),
-                    Card(
-                      elevation: 5,
-                      shape: RoundedRectangleBorder(
-                        side: BorderSide(
-                          color: Colors.black,
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(10),
                         ),
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(12)),
                       ),
-                      child: ListTile(
-                        title: Text('Age'),
-                        subtitle: Text('5'),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(height: 20),
+                          Card(
+                            elevation: 5,
+                            shape: RoundedRectangleBorder(
+                              side: BorderSide(
+                                color: Colors.black,
+                              ),
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(12)),
+                            ),
+                            child: ListTile(
+                              title: Text('Name'),
+                              subtitle: Text(entry.value["name"]),
+                            ),
+                          ),
+                          Card(
+                            elevation: 5,
+                            shape: RoundedRectangleBorder(
+                              side: BorderSide(
+                                color: Colors.black,
+                              ),
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(12)),
+                            ),
+                            child: ListTile(
+                              title: Text('Age'),
+                              subtitle: Text(entry.value["age"]),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
-                ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(10),
-                  ),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(height: 20),
-                    Card(
-                      elevation: 5,
-                      shape: RoundedRectangleBorder(
-                        side: BorderSide(
-                          color: Colors.black,
-                        ),
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(12)),
-                      ),
-                      child: ListTile(
-                        title: Text('Name'),
-                        subtitle: Text('Name of Child'),
-                      ),
-                    ),
-                    Card(
-                      elevation: 5,
-                      shape: RoundedRectangleBorder(
-                        side: BorderSide(
-                          color: Colors.black,
-                        ),
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(12)),
-                      ),
-                      child: ListTile(
-                        title: Text('Age'),
-                        subtitle: Text('5'),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+                );
+              }).toList()),
               SizedBox(height: 70),
               Container(
                 alignment: Alignment.center,

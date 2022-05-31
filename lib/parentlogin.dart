@@ -1,8 +1,19 @@
-import 'package:flutter/material.dart';
+import 'dart:async';
 
-class ParentLogin extends StatelessWidget {
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:keeper/database/database.dart';
+import 'package:keeper/database/providers.dart';
+
+class ParentLogin extends ConsumerStatefulWidget {
+  @override
+  ParentLoginState createState() => ParentLoginState();
+}
+
+class ParentLoginState extends ConsumerState<ParentLogin> {
   final TextEditingController phoneCtrl = TextEditingController();
   final TextEditingController passCtrl = TextEditingController();
+  bool error = false;
 
   @override
   Widget build(BuildContext context) {
@@ -14,6 +25,25 @@ class ParentLogin extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            if (error)
+              Container(
+                height: 30,
+                width: 200,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(25),
+                  color: Colors.red[400],
+                ),
+                child: Text(
+                  "Wrong username or password!",
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            SizedBox(
+              height: 20,
+            ),
             Text(
               "Parent Login",
               style: TextStyle(
@@ -66,11 +96,23 @@ class ParentLogin extends StatelessWidget {
                     height: 20,
                   ),
                   ElevatedButton(
-                    onPressed: () {
-                      print(phoneCtrl.text);
-                      print(passCtrl.text);
-                      //todo
-                      //Navigator.pushNamed(context, '/parentprofile');
+                    onPressed: () async {
+                      var navigator = Navigator.of(context);
+                      var db = Database();
+                      if (await db.loginParent(phoneCtrl.text, passCtrl.text)) {
+                        ref.read(sessionProvider).update();
+                        navigator.pop();
+                      } else {
+                        setState(() {
+                          error = true;
+                        });
+                        Timer(Duration(seconds: 5), () {
+                          setState(() {
+                            error = false;
+                          });
+                        });
+                        print("Failed!");
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                         minimumSize: Size(150, 40),

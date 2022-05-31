@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:keeper/database/database.dart';
+import 'package:keeper/models/parent.dart';
 import 'package:keeper/widgets/counter.dart';
 
 class ParentSignup extends StatefulWidget {
@@ -340,10 +342,83 @@ class _ParentSignupState extends State<ParentSignup> {
                         ),
                         Column(children: childList),
                         ElevatedButton(
-                          onPressed: () {
+                          onPressed: () async {
                             if (formCtrl.currentState!.validate()) {
-                              for (var child in childCtrl) {
-                                print(child.text);
+                              Map<String, Map> cd = {};
+                              for (var i = 0; i < _count; i++) {
+                                var cdt = {
+                                  "name": childCtrl.elementAt(i * 2).text,
+                                  "age": childCtrl.elementAt((i * 2) + 1).text
+                                };
+                                cd["$i"] = cdt;
+                              }
+
+                              var db = Database();
+                              var parent = Parent(
+                                name: nameCtrl.text,
+                                nid: nidCtrl.text,
+                                phone: phoneCtrl.text,
+                                password: passCtrl.text,
+                                rating: 0,
+                                numberOfChild: _count,
+                                childDetails: cd,
+                                approved: false,
+                                suspended: false,
+                              );
+                              if (await db.fieldIsUnique(
+                                      "parent", "phone", phoneCtrl.text) &&
+                                  await db.fieldIsUnique(
+                                      "parent", "nid", nidCtrl.text)) {
+                                if (await db.signupParent(parent)) {
+                                  showDialog(
+                                    context: context,
+                                    barrierDismissible: false,
+                                    builder: (_) => AlertDialog(
+                                      title: Text("Successful!"),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                            Navigator.pop(context);
+                                          },
+                                          child: Text("Okay!"),
+                                        )
+                                      ],
+                                    ),
+                                  );
+                                } else {
+                                  showDialog(
+                                    context: context,
+                                    barrierDismissible: false,
+                                    builder: (_) => AlertDialog(
+                                      title: Text("Failed!"),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          child: Text("Okay!"),
+                                        )
+                                      ],
+                                    ),
+                                  );
+                                }
+                              } else {
+                                showDialog(
+                                  context: context,
+                                  barrierDismissible: false,
+                                  builder: (_) => AlertDialog(
+                                    title: Text("Failed!"),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text("Okay!"),
+                                      )
+                                    ],
+                                  ),
+                                );
                               }
                             }
                           },

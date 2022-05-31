@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:keeper/models/parent.dart';
 import 'package:keeper/models/sitter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -17,6 +18,42 @@ class Database {
       await prefs.setString('userType', 'parent');
     }
     return result.docs.isNotEmpty;
+  }
+
+  Future<bool> signupParent(Parent parent) async {
+    return await FirebaseFirestore.instance
+        .collection('parent')
+        .add(parent.getMap())
+        .then((value) {
+      return true;
+    }).onError((error, stackTrace) {
+      print(error);
+      return false;
+    });
+  }
+
+  Future<Parent> getParentDetails(String phone) async {
+    return FirebaseFirestore.instance
+        .collection('parent')
+        .where('phone', isEqualTo: phone)
+        .get()
+        .then(
+      (value) {
+        var data = value.docs.first.data();
+
+        return Parent(
+          name: data["name"],
+          nid: data["nid"],
+          phone: data["phone"],
+          password: data["password"],
+          rating: data["rating"],
+          numberOfChild: data["numberOfChild"],
+          childDetails: Map.castFrom(data["childDetails"]),
+          approved: data["approved"],
+          suspended: data["suspended"],
+        );
+      },
+    );
   }
 
   Future<bool> loginSitter(String phone, String password) async {

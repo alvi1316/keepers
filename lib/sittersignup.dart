@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:keeper/database/database.dart';
 import 'package:keeper/models/sitter.dart';
@@ -15,8 +13,6 @@ class _SitterSignupState extends State<SitterSignup> {
   final TextEditingController phoneCtrl = TextEditingController();
   final TextEditingController passCtrl = TextEditingController();
   final GlobalKey<FormState> formCtrl = GlobalKey<FormState>();
-  bool error = false;
-  bool success = false;
 
   @override
   Widget build(BuildContext context) {
@@ -30,38 +26,6 @@ class _SitterSignupState extends State<SitterSignup> {
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  if (error)
-                    Container(
-                      height: 30,
-                      width: 200,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(25),
-                        color: Colors.red[400],
-                      ),
-                      child: Text(
-                        "Failed!",
-                        style: TextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  if (success)
-                    Container(
-                      height: 30,
-                      width: 200,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(25),
-                        color: Colors.white,
-                      ),
-                      child: Text(
-                        "Successful!",
-                      ),
-                    ),
-                  SizedBox(
-                    height: 20,
-                  ),
                   Text(
                     "Sitter Signup",
                     style: TextStyle(
@@ -221,35 +185,60 @@ class _SitterSignupState extends State<SitterSignup> {
                                   await db.fieldIsUnique(
                                       "sitter", "nid", nidCtrl.text)) {
                                 if (await db.signupSitter(sitter)) {
-                                  setState(() {
-                                    success = true;
-                                  });
-                                  Timer(Duration(seconds: 5), () {
-                                    setState(() {
-                                      success = false;
-                                    });
-                                  });
+                                  showDialog(
+                                    context: context,
+                                    barrierDismissible: false,
+                                    builder: (_) => AlertDialog(
+                                      title: Text("Successful!"),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                            Navigator.pop(context);
+                                          },
+                                          child: Text("Okay!"),
+                                        )
+                                      ],
+                                    ),
+                                  );
+
                                   print("Success!");
                                 } else {
-                                  setState(() {
-                                    error = true;
-                                  });
-                                  Timer(Duration(seconds: 5), () {
-                                    setState(() {
-                                      error = false;
-                                    });
-                                  });
+                                  showDialog(
+                                    context: context,
+                                    barrierDismissible: false,
+                                    builder: (_) => AlertDialog(
+                                      title: Text("Failed!"),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          child: Text("Okay!"),
+                                        )
+                                      ],
+                                    ),
+                                  );
+
                                   print("Failed!");
                                 }
                               } else {
-                                setState(() {
-                                  error = true;
-                                });
-                                Timer(Duration(seconds: 5), () {
-                                  setState(() {
-                                    error = false;
-                                  });
-                                });
+                                showDialog(
+                                  context: context,
+                                  barrierDismissible: false,
+                                  builder: (_) => AlertDialog(
+                                    title: Text("Failed!"),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text("Okay!"),
+                                      )
+                                    ],
+                                  ),
+                                );
+
                                 print("Failed!");
                               }
                             }

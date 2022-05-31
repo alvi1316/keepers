@@ -7,7 +7,7 @@ class Parent {
   double? rating;
   bool? approved;
   bool? suspended;
-  Map<String, dynamic>? childDetails = {};
+  Map<String, Map>? childDetails = {};
 
   Parent({
     this.name,
@@ -20,4 +20,18 @@ class Parent {
     this.suspended,
     this.childDetails,
   });
+
+  Map<String, dynamic> getMap() {
+    return {
+      "name": name,
+      "nid": nid,
+      "phone": phone,
+      "password": password,
+      "rating": rating,
+      "approved": approved,
+      "suspended": suspended,
+      "numberOfChild": numberOfChild,
+      "childDetails": childDetails,
+    };
+  }
 }
