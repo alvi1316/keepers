@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 
 class WeekDaySelector extends StatefulWidget {
-  const WeekDaySelector({Key? key}) : super(key: key);
+  final Function callback;
+  const WeekDaySelector({Key? key, required this.callback}) : super(key: key);
 
   @override
-  State<WeekDaySelector> createState() => _WeekDaySelectorState();
+  State<WeekDaySelector> createState() => WeekDaySelectorState();
 }
 
-class _WeekDaySelectorState extends State<WeekDaySelector> {
+class WeekDaySelectorState extends State<WeekDaySelector> {
   bool fr = false;
   bool sa = false;
   bool su = false;
@@ -15,6 +16,32 @@ class _WeekDaySelectorState extends State<WeekDaySelector> {
   bool tu = false;
   bool we = false;
   bool th = false;
+
+  void onChangeUpdate() {
+    String temp = "";
+    if (fr) {
+      temp += "fr,";
+    }
+    if (sa) {
+      temp += "sa,";
+    }
+    if (su) {
+      temp += "su,";
+    }
+    if (mo) {
+      temp += "mo,";
+    }
+    if (tu) {
+      temp += "tu,";
+    }
+    if (we) {
+      temp += "we,";
+    }
+    if (th) {
+      temp += "th,";
+    }
+    widget.callback(temp);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,6 +65,7 @@ class _WeekDaySelectorState extends State<WeekDaySelector> {
                 onChanged: (bool? value) {
                   setState(() {
                     fr = value!;
+                    onChangeUpdate();
                   });
                 },
               ),
@@ -47,6 +75,7 @@ class _WeekDaySelectorState extends State<WeekDaySelector> {
                 onChanged: (bool? value) {
                   setState(() {
                     sa = value!;
+                    onChangeUpdate();
                   });
                 },
               ),
@@ -56,6 +85,7 @@ class _WeekDaySelectorState extends State<WeekDaySelector> {
                 onChanged: (bool? value) {
                   setState(() {
                     su = value!;
+                    onChangeUpdate();
                   });
                 },
               ),
@@ -65,6 +95,7 @@ class _WeekDaySelectorState extends State<WeekDaySelector> {
                 onChanged: (bool? value) {
                   setState(() {
                     mo = value!;
+                    onChangeUpdate();
                   });
                 },
               ),
@@ -78,6 +109,7 @@ class _WeekDaySelectorState extends State<WeekDaySelector> {
                 onChanged: (bool? value) {
                   setState(() {
                     tu = value!;
+                    onChangeUpdate();
                   });
                 },
               ),
@@ -87,6 +119,7 @@ class _WeekDaySelectorState extends State<WeekDaySelector> {
                 onChanged: (bool? value) {
                   setState(() {
                     we = value!;
+                    onChangeUpdate();
                   });
                 },
               ),
@@ -96,6 +129,7 @@ class _WeekDaySelectorState extends State<WeekDaySelector> {
                 onChanged: (bool? value) {
                   setState(() {
                     th = value!;
+                    onChangeUpdate();
                   });
                 },
               ),

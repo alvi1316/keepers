@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 
 class TimePicker extends StatefulWidget {
   final String label;
-  const TimePicker({Key? key, required this.label}) : super(key: key);
+  final Function callback;
+  const TimePicker({Key? key, required this.label, required this.callback})
+      : super(key: key);
 
   @override
   State<TimePicker> createState() => _TimePickerState();
@@ -54,6 +56,7 @@ class _TimePickerState extends State<TimePicker> {
               setState(() {
                 ctrl.text =
                     "${pickedTime.hour.toString().padLeft(2, '0')}:${pickedTime.minute.toString().padLeft(2, '0')} ${pickedTime.period.toString().split(".")[1]}";
+                widget.callback(ctrl.text);
               });
             }
           },

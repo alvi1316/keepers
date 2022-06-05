@@ -1,14 +1,63 @@
 import 'package:flutter/material.dart';
-import 'package:keeper/widgets/timepicker.dart';
-import 'package:keeper/widgets/weekday.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:keeper/database/database.dart';
+import 'package:keeper/database/providers.dart';
+import 'package:keeper/models/parent.dart';
+import 'package:keeper/widgets/drawer.dart';
+import 'package:keeper/jobpost/timepicker.dart';
+import 'package:keeper/jobpost/weekday.dart';
 
-class JobPost extends StatelessWidget {
-  final List<String> children = [
-    'Child 1',
-    'Child 2',
-  ];
+class JobPost extends ConsumerStatefulWidget {
+  const JobPost({Key? key}) : super(key: key);
 
-  final bool value = false;
+  @override
+  JobPostState createState() => JobPostState();
+}
+
+class JobPostState extends ConsumerState {
+  Parent parent = Parent();
+  List<String> children = [];
+  TextEditingController age = TextEditingController();
+  TextEditingController description = TextEditingController();
+  TextEditingController salary = TextEditingController();
+  late SessionDetails session;
+  String weekdays = "";
+  String startTime = "";
+  String endTime = "";
+
+  void callback(String weekdays) {
+    this.weekdays = weekdays;
+  }
+
+  void callback1(String startTime) {
+    this.startTime = startTime;
+  }
+
+  void callback2(String endTime) {
+    this.endTime = endTime;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    session = ref.read(sessionProvider);
+    var db = Database();
+    db.getParentDetails(session.phone).then(
+      (value) {
+        setState(() {
+          parent = value;
+          List<String> temp = [];
+          value.childDetails!.forEach((key, value) {
+            temp.add(value['name']);
+            children = temp;
+          });
+          age.text = value.childDetails!.isEmpty
+              ? ""
+              : value.childDetails!.values.first["age"];
+        });
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,46 +66,7 @@ class JobPost extends StatelessWidget {
         backgroundColor: Colors.pink[800],
         title: Text("New Job"),
       ),
-      drawer: Drawer(
-        child: ListView(
-          children: [
-            DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.pink[800],
-              ),
-              child: Text(
-                'User Name',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 26,
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            ListTile(
-              shape: RoundedRectangleBorder(
-                side: BorderSide(color: Colors.pink, width: 2),
-                borderRadius: BorderRadius.circular(25),
-              ),
-              title: Text('Edit Profile'),
-              onTap: () {},
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            ListTile(
-              shape: RoundedRectangleBorder(
-                side: BorderSide(color: Colors.pink, width: 2),
-                borderRadius: BorderRadius.circular(25),
-              ),
-              title: Text('Logout'),
-              onTap: () {},
-            ),
-          ],
-        ),
-      ),
+      drawer: CustomDrawer(logout: true, jobpost: false),
       body: Container(
         padding: EdgeInsets.only(left: 20, right: 20),
         color: Color.fromRGBO(87, 24, 158, 82),
@@ -96,7 +106,7 @@ class JobPost extends StatelessWidget {
                       ListTile(
                         title: Text('Name'),
                         subtitle: DropdownButtonFormField(
-                          value: 'Child 1',
+                          value: children.isEmpty ? "" : children.first,
                           icon: const Icon(Icons.keyboard_arrow_down),
                           items: children.map((String items) {
                             return DropdownMenuItem(
@@ -104,7 +114,16 @@ class JobPost extends StatelessWidget {
                               child: Text(items),
                             );
                           }).toList(),
-                          onChanged: (String? newValue) {},
+                          onChanged: (String? newValue) {
+                            String val = newValue ?? "";
+                            setState(() {
+                              parent.childDetails!.forEach((key, value) {
+                                if (value['name'] == val) {
+                                  age.text = value['age'];
+                                }
+                              });
+                            });
+                          },
                           decoration: const InputDecoration(
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.all(
@@ -117,7 +136,8 @@ class JobPost extends StatelessWidget {
                       ListTile(
                         title: Text('Age'),
                         subtitle: TextField(
-                          keyboardType: TextInputType.number,
+                          controller: age,
+                          readOnly: true,
                           decoration: InputDecoration(
                             filled: true,
                             fillColor: Colors.white,
@@ -130,21 +150,28 @@ class JobPost extends StatelessWidget {
                       ),
                       ListTile(
                         title: Text('Week days'),
-                        subtitle: WeekDaySelector(),
+                        subtitle: WeekDaySelector(callback: callback),
                       ),
                       ListTile(
                         title: Text('Time'),
                         subtitle: Column(
                           children: [
-                            TimePicker(label: "Start Time"),
+                            TimePicker(
+                              label: "Start Time",
+                              callback: callback1,
+                            ),
                             SizedBox(height: 5),
-                            TimePicker(label: "End Time"),
+                            TimePicker(
+                              label: "End Time",
+                              callback: callback2,
+                            ),
                           ],
                         ),
                       ),
                       ListTile(
                         title: Text('Job description'),
                         subtitle: TextField(
+                          controller: description,
                           minLines: 3,
                           maxLines: 10,
                           decoration: InputDecoration(
@@ -160,6 +187,7 @@ class JobPost extends StatelessWidget {
                       ListTile(
                         title: Text('Salary'),
                         subtitle: TextField(
+                          controller: salary,
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
                             filled: true,
