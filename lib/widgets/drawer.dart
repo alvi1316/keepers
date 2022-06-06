@@ -55,9 +55,11 @@ class CustomDrawer extends ConsumerWidget {
               ),
               title: Text('Logout'),
               onTap: () async {
+                var navigator = Navigator.of(context);
                 var pref = await SharedPreferences.getInstance();
                 pref.clear();
                 ref.read(sessionProvider).update();
+                navigator.popUntil((route) => route.settings.name == '/');
               },
             ),
           if (logout)

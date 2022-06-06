@@ -15,8 +15,9 @@ class ChildDetailsState extends ConsumerState<ChildDetails> {
   Parent parent = Parent();
 
   @override
-  Widget build(BuildContext context) {
-    var session = ref.watch(sessionProvider);
+  void initState() {
+    super.initState();
+    var session = ref.read(sessionProvider);
     var db = Database();
     db.getParentDetails(session.phone).then(
       (value) {
@@ -25,7 +26,10 @@ class ChildDetailsState extends ConsumerState<ChildDetails> {
         });
       },
     );
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Column(
       children: [
         Container(

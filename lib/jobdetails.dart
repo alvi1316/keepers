@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:keeper/widgets/drawer.dart';
 
 class JobDetails extends StatelessWidget {
   @override
@@ -8,46 +9,7 @@ class JobDetails extends StatelessWidget {
         backgroundColor: Colors.pink[800],
         title: Text("Job Details"),
       ),
-      drawer: Drawer(
-        child: ListView(
-          children: [
-            DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.pink[800],
-              ),
-              child: Text(
-                'User Name',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 26,
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            ListTile(
-              shape: RoundedRectangleBorder(
-                side: BorderSide(color: Colors.pink, width: 2),
-                borderRadius: BorderRadius.circular(25),
-              ),
-              title: Text('Edit Profile'),
-              onTap: () {},
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            ListTile(
-              shape: RoundedRectangleBorder(
-                side: BorderSide(color: Colors.pink, width: 2),
-                borderRadius: BorderRadius.circular(25),
-              ),
-              title: Text('Logout'),
-              onTap: () {},
-            ),
-          ],
-        ),
-      ),
+      drawer: CustomDrawer(logout: true, jobpost: false),
       body: Container(
         padding: EdgeInsets.only(left: 20, right: 20),
         color: Color.fromRGBO(87, 24, 158, 82),

@@ -18,15 +18,14 @@ class JobPost extends ConsumerStatefulWidget {
 class JobPostState extends ConsumerState {
   Parent parent = Parent();
   List<String> children = [];
+
   TextEditingController age = TextEditingController();
   TextEditingController description = TextEditingController();
   TextEditingController salary = TextEditingController();
-  late SessionDetails session;
   String weekdays = "";
   String startTime = "";
   String endTime = "";
   String childName = "";
-  final GlobalKey<FormState> formCtrl = GlobalKey<FormState>();
 
   void callback(String weekdays) {
     this.weekdays = weekdays;
@@ -40,10 +39,47 @@ class JobPostState extends ConsumerState {
     this.endTime = endTime;
   }
 
+  void showError(BuildContext context, String text) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => AlertDialog(
+        title: Text(text),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Text("Okay!"),
+          )
+        ],
+      ),
+    );
+  }
+
+  void showSuccess(BuildContext context, String text) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => AlertDialog(
+        title: Text(text),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.pop(context);
+            },
+            child: Text("Okay!"),
+          )
+        ],
+      ),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
-    session = ref.read(sessionProvider);
+    var session = ref.read(sessionProvider);
     var db = Database();
     db.getParentDetails(session.phone).then(
       (value) {
@@ -65,28 +101,10 @@ class JobPostState extends ConsumerState {
 
   @override
   Widget build(BuildContext context) {
-    void showError(String text) {
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (_) => AlertDialog(
-          title: Text(text),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text("Okay!"),
-            )
-          ],
-        ),
-      );
-    }
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.pink[800],
-        title: Text("New Job"),
+        title: Text("Post New Job"),
       ),
       drawer: CustomDrawer(logout: true, jobpost: false),
       body: Container(
@@ -114,7 +132,6 @@ class JobPostState extends ConsumerState {
               ),
               SizedBox(height: 10),
               Form(
-                key: formCtrl,
                 child: Container(
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -237,21 +254,44 @@ class JobPostState extends ConsumerState {
                           child: Text("Post"),
                           onPressed: () async {
                             if (childName == "") {
-                              showError("Please enter child name!");
-                            } else if (description.text == "") {
-                              showError("Please enter job description!");
-                            } else if (salary.text == "") {
-                              showError("Please enter salary!");
-                            } else if (startTime == "") {
-                              showError("Please select start time!");
-                            } else if (endTime == "") {
-                              showError("Please select end time!");
+                              showError(
+                                context,
+                                "Please enter child name!",
+                              );
+                            } else if (age.text == "") {
+                              showError(
+                                context,
+                                "Please enter child age!",
+                              );
                             } else if (weekdays == "") {
-                              showError("Please select atleast one week day!");
+                              showError(
+                                context,
+                                "Please select minimum one week day!",
+                              );
+                            } else if (startTime == "") {
+                              showError(
+                                context,
+                                "Please select start time!",
+                              );
+                            } else if (endTime == "") {
+                              showError(
+                                context,
+                                "Please select end time!",
+                              );
+                            } else if (description.text == "") {
+                              showError(
+                                context,
+                                "Please enter job description!",
+                              );
+                            } else if (salary.text == "") {
+                              showError(
+                                context,
+                                "Please enter salary!",
+                              );
                             } else {
                               var db = Database();
                               var job = Job(
-                                postedBy: session.name,
+                                postedBy: parent.name,
                                 childName: childName,
                                 age: int.parse(age.text),
                                 weekdays: weekdays,
@@ -264,10 +304,9 @@ class JobPostState extends ConsumerState {
                                 selected: "",
                               );
                               if (await db.postJob(job)) {
-                                showError("Success!");
-                                Navigator.pop(context);
+                                showSuccess(context, "Success!");
                               } else {
-                                showError("Failed!");
+                                showError(context, "Failed!");
                               }
                             }
                           },

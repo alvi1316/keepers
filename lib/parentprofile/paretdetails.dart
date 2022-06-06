@@ -13,9 +13,11 @@ class ParentDetails extends ConsumerStatefulWidget {
 
 class ParentDetailsState extends ConsumerState<ParentDetails> {
   Parent parent = Parent();
+
   @override
-  Widget build(BuildContext context) {
-    var session = ref.watch(sessionProvider);
+  void initState() {
+    super.initState();
+    var session = ref.read(sessionProvider);
     var db = Database();
     db.getParentDetails(session.phone).then(
       (value) {
@@ -24,7 +26,10 @@ class ParentDetailsState extends ConsumerState<ParentDetails> {
         });
       },
     );
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Column(
       children: [
         Container(
@@ -64,7 +69,7 @@ class ParentDetailsState extends ConsumerState<ParentDetails> {
                 ),
                 child: ListTile(
                   title: Text('Name'),
-                  subtitle: Text((parent.name == null) ? "" : parent.name!),
+                  subtitle: Text(parent.name ?? ""),
                 ),
               ),
               Card(
@@ -77,7 +82,7 @@ class ParentDetailsState extends ConsumerState<ParentDetails> {
                 ),
                 child: ListTile(
                   title: Text('Nid'),
-                  subtitle: Text((parent.nid == null) ? "" : parent.nid!),
+                  subtitle: Text(parent.nid ?? ""),
                 ),
               ),
               Card(
@@ -90,7 +95,7 @@ class ParentDetailsState extends ConsumerState<ParentDetails> {
                 ),
                 child: ListTile(
                   title: Text('Phone'),
-                  subtitle: Text((parent.phone == null) ? "" : parent.phone!),
+                  subtitle: Text(parent.phone ?? ""),
                 ),
               ),
               Card(

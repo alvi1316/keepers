@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:keeper/database/database.dart';
 import 'package:keeper/database/providers.dart';
 import 'package:keeper/models/sitter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:keeper/widgets/drawer.dart';
 
 class SitterProfile extends ConsumerStatefulWidget {
   @override
@@ -12,12 +12,11 @@ class SitterProfile extends ConsumerStatefulWidget {
 
 class SitterProfileState extends ConsumerState<SitterProfile> {
   Sitter sitter = Sitter();
-  late SessionDetails session;
 
   @override
   void initState() {
     super.initState();
-    session = ref.read(sessionProvider);
+    var session = ref.read(sessionProvider);
     var db = Database();
     db.getSitterDetails(session.phone).then(
       (value) {
@@ -35,33 +34,7 @@ class SitterProfileState extends ConsumerState<SitterProfile> {
         backgroundColor: Colors.pink[800],
         title: Text("Sitter Profile"),
       ),
-      drawer: Drawer(
-        child: ListView(
-          children: [
-            DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.pink[800],
-              ),
-              child: Text(
-                session.name,
-                style: TextStyle(color: Colors.white, fontSize: 26),
-              ),
-            ),
-            ListTile(
-              shape: RoundedRectangleBorder(
-                side: BorderSide(color: Colors.pink, width: 2),
-                borderRadius: BorderRadius.circular(25),
-              ),
-              title: Text('Logout'),
-              onTap: () async {
-                var pref = await SharedPreferences.getInstance();
-                pref.clear();
-                ref.read(sessionProvider).update();
-              },
-            ),
-          ],
-        ),
-      ),
+      drawer: CustomDrawer(logout: true, jobpost: false),
       body: Container(
         padding: EdgeInsets.only(left: 20, right: 20),
         color: Color.fromRGBO(87, 24, 158, 82),
@@ -107,8 +80,7 @@ class SitterProfileState extends ConsumerState<SitterProfile> {
                       ),
                       child: ListTile(
                         title: Text('Name'),
-                        subtitle:
-                            Text((sitter.name == null) ? "" : sitter.name!),
+                        subtitle: Text(sitter.name ?? ""),
                       ),
                     ),
                     Card(
@@ -122,7 +94,7 @@ class SitterProfileState extends ConsumerState<SitterProfile> {
                       ),
                       child: ListTile(
                         title: Text('Nid'),
-                        subtitle: Text((sitter.nid == null) ? "" : sitter.nid!),
+                        subtitle: Text(sitter.nid ?? ""),
                       ),
                     ),
                     Card(
@@ -136,8 +108,7 @@ class SitterProfileState extends ConsumerState<SitterProfile> {
                       ),
                       child: ListTile(
                         title: Text('Phone'),
-                        subtitle:
-                            Text((sitter.phone == null) ? "" : sitter.phone!),
+                        subtitle: Text(sitter.phone ?? ""),
                       ),
                     ),
                     Card(

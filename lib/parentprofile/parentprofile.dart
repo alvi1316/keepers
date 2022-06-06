@@ -14,12 +14,11 @@ class ParentProfile extends ConsumerStatefulWidget {
 
 class ParentProfileState extends ConsumerState<ParentProfile> {
   Parent parent = Parent();
-  late SessionDetails session;
 
   @override
   void initState() {
     super.initState();
-    session = ref.watch(sessionProvider);
+    var session = ref.read(sessionProvider);
     var db = Database();
     db.getParentDetails(session.phone).then(
       (value) {

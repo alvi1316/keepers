@@ -18,30 +18,10 @@ class SessionDetails extends ChangeNotifier {
 
   void update() async {
     var ref = await SharedPreferences.getInstance();
-    var isLoggedIn = ref.getBool("isLoggedIn");
-    var name = ref.getString("name");
-    var userType = ref.getString("userType");
-    var phone = ref.getString("phone");
-    if (isLoggedIn != null) {
-      this.isLoggedIn = isLoggedIn;
-    } else {
-      this.isLoggedIn = false;
-    }
-    if (userType != null) {
-      this.userType = userType;
-    } else {
-      this.userType = "";
-    }
-    if (name != null) {
-      this.name = name;
-    } else {
-      this.name = "";
-    }
-    if (phone != null) {
-      this.phone = phone;
-    } else {
-      this.phone = "";
-    }
+    isLoggedIn = ref.getBool("isLoggedIn") ?? false;
+    userType = ref.getString("userType") ?? "";
+    name = ref.getString("name") ?? "";
+    phone = ref.getString("phone") ?? "";
     notifyListeners();
   }
 }
