@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:keeper/database/database.dart';
 import 'package:keeper/models/parent.dart';
-import 'package:keeper/widgets/counter.dart';
+import 'package:keeper/parentsignup/counter.dart';
 
 class ParentSignup extends StatefulWidget {
   @override

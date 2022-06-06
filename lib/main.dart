@@ -7,7 +7,7 @@ import 'package:keeper/jobdetails.dart';
 import 'package:keeper/jobpost/jobpost.dart';
 import 'package:keeper/parentlogin.dart';
 import 'package:keeper/parentprofile/parentprofile.dart';
-import 'package:keeper/parentsignup.dart';
+import 'package:keeper/parentsignup/parentsignup.dart';
 import 'package:keeper/sitterlogin.dart';
 import 'package:keeper/sitterprofile.dart';
 import 'package:keeper/sittersignup.dart';

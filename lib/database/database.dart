@@ -1,9 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:keeper/models/job.dart';
 import 'package:keeper/models/parent.dart';
 import 'package:keeper/models/sitter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Database {
+  //----------------------------------Parent------------------------------------
+
   Future<bool> loginParent(String phone, String password) async {
     var result = await FirebaseFirestore.instance
         .collection('parent')
@@ -56,6 +59,17 @@ class Database {
     );
   }
 
+  Future<bool> postJob(Job job) async {
+    return await FirebaseFirestore.instance
+        .collection('job')
+        .add(job.getMap())
+        .then((value) {
+      return true;
+    }).onError((error, stackTrace) => false);
+  }
+
+  //--------------------------------Sitter--------------------------------------
+
   Future<bool> loginSitter(String phone, String password) async {
     var result = await FirebaseFirestore.instance
         .collection('sitter')
@@ -101,6 +115,8 @@ class Database {
       },
     );
   }
+
+  //----------------------------------Other-------------------------------------
 
   Future<bool> fieldIsUnique(
       String userType, String field, String value) async {

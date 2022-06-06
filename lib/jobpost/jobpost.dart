@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:keeper/database/database.dart';
 import 'package:keeper/database/providers.dart';
+import 'package:keeper/models/job.dart';
 import 'package:keeper/models/parent.dart';
 import 'package:keeper/widgets/drawer.dart';
 import 'package:keeper/jobpost/timepicker.dart';
@@ -24,6 +25,8 @@ class JobPostState extends ConsumerState {
   String weekdays = "";
   String startTime = "";
   String endTime = "";
+  String childName = "";
+  final GlobalKey<FormState> formCtrl = GlobalKey<FormState>();
 
   void callback(String weekdays) {
     this.weekdays = weekdays;
@@ -51,6 +54,7 @@ class JobPostState extends ConsumerState {
             temp.add(value['name']);
             children = temp;
           });
+          childName = value.childDetails!.values.first["name"];
           age.text = value.childDetails!.isEmpty
               ? ""
               : value.childDetails!.values.first["age"];
@@ -61,6 +65,24 @@ class JobPostState extends ConsumerState {
 
   @override
   Widget build(BuildContext context) {
+    void showError(String text) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => AlertDialog(
+          title: Text(text),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text("Okay!"),
+            )
+          ],
+        ),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.pink[800],
@@ -92,6 +114,7 @@ class JobPostState extends ConsumerState {
               ),
               SizedBox(height: 10),
               Form(
+                key: formCtrl,
                 child: Container(
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -116,6 +139,7 @@ class JobPostState extends ConsumerState {
                           }).toList(),
                           onChanged: (String? newValue) {
                             String val = newValue ?? "";
+                            childName = val;
                             setState(() {
                               parent.childDetails!.forEach((key, value) {
                                 if (value['name'] == val) {
@@ -211,7 +235,42 @@ class JobPostState extends ConsumerState {
                             ),
                           ),
                           child: Text("Post"),
-                          onPressed: () {},
+                          onPressed: () async {
+                            if (childName == "") {
+                              showError("Please enter child name!");
+                            } else if (description.text == "") {
+                              showError("Please enter job description!");
+                            } else if (salary.text == "") {
+                              showError("Please enter salary!");
+                            } else if (startTime == "") {
+                              showError("Please select start time!");
+                            } else if (endTime == "") {
+                              showError("Please select end time!");
+                            } else if (weekdays == "") {
+                              showError("Please select atleast one week day!");
+                            } else {
+                              var db = Database();
+                              var job = Job(
+                                postedBy: session.name,
+                                childName: childName,
+                                age: int.parse(age.text),
+                                weekdays: weekdays,
+                                startTime: startTime,
+                                endTime: endTime,
+                                salary: int.parse(salary.text),
+                                description: description.text,
+                                appliedBy: [],
+                                approved: false,
+                                selected: "",
+                              );
+                              if (await db.postJob(job)) {
+                                showError("Success!");
+                                Navigator.pop(context);
+                              } else {
+                                showError("Failed!");
+                              }
+                            }
+                          },
                         ),
                       ),
                       SizedBox(height: 10),
