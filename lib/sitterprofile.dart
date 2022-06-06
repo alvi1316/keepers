@@ -12,10 +12,12 @@ class SitterProfile extends ConsumerStatefulWidget {
 
 class SitterProfileState extends ConsumerState<SitterProfile> {
   Sitter sitter = Sitter();
+  late SessionDetails session;
 
   @override
-  Widget build(BuildContext context) {
-    var session = ref.watch(sessionProvider);
+  void initState() {
+    super.initState();
+    session = ref.read(sessionProvider);
     var db = Database();
     db.getSitterDetails(session.phone).then(
       (value) {
@@ -24,6 +26,10 @@ class SitterProfileState extends ConsumerState<SitterProfile> {
         });
       },
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.pink[800],

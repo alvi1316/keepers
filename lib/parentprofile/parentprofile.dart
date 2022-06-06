@@ -14,9 +14,12 @@ class ParentProfile extends ConsumerStatefulWidget {
 
 class ParentProfileState extends ConsumerState<ParentProfile> {
   Parent parent = Parent();
+  late SessionDetails session;
+
   @override
-  Widget build(BuildContext context) {
-    var session = ref.watch(sessionProvider);
+  void initState() {
+    super.initState();
+    session = ref.watch(sessionProvider);
     var db = Database();
     db.getParentDetails(session.phone).then(
       (value) {
@@ -25,12 +28,16 @@ class ParentProfileState extends ConsumerState<ParentProfile> {
         });
       },
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.pink[800],
         title: Text("Parent Profile"),
       ),
-      drawer: CustomDrawer(logout: true,jobpost: true),
+      drawer: CustomDrawer(logout: true, jobpost: true),
       body: Container(
         padding: EdgeInsets.only(left: 20, right: 20),
         color: Color.fromRGBO(87, 24, 158, 82),
