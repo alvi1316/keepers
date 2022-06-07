@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:keeper/models/job.dart';
 import 'package:keeper/models/parent.dart';
@@ -66,6 +68,32 @@ class Database {
         .then((value) {
       return true;
     }).onError((error, stackTrace) => false);
+  }
+
+  Stream<List<Job>> getPostedJob(String name) {
+    return FirebaseFirestore.instance
+        .collection('job')
+        .where('postedBy', isEqualTo: name)
+        .snapshots()
+        .map((event) {
+      return event.docs.map((e) {
+        return Job(
+          postedBy: e.get("postedBy"),
+          childName: e.get("childName"),
+          age: e.get("age"),
+          weekdays: e.get("weekdays"),
+          startTime: e.get("startTime"),
+          endTime: e.get("endTime"),
+          salary: e.get("salary"),
+          appliedBy: (e.get("appliedBy") as List)
+              .map((item) => item as String)
+              .toList(),
+          approved: e.get("approved"),
+          description: e.get("description"),
+          selected: e.get("selected"),
+        );
+      }).toList();
+    });
   }
 
   //--------------------------------Sitter--------------------------------------

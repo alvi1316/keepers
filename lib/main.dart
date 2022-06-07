@@ -5,6 +5,7 @@ import 'package:keeper/home.dart';
 import 'package:keeper/initialpage.dart';
 import 'package:keeper/jobdetails.dart';
 import 'package:keeper/jobpost/jobpost.dart';
+import 'package:keeper/models/job.dart';
 import 'package:keeper/parentlogin.dart';
 import 'package:keeper/parentprofile/parentprofile.dart';
 import 'package:keeper/parentsignup/parentsignup.dart';
@@ -27,17 +28,36 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       initialRoute: '/',
-      routes: {
-        '/': (context) => InitialPage(),
-        '/home': (context) => Home(),
-        '/sitterlogin': (context) => SitterLogin(),
-        '/sittersignup': (context) => SitterSignup(),
-        '/sitterprofile': (context) => SitterProfile(),
-        '/parentlogin': (context) => ParentLogin(),
-        '/parentsignup': (context) => ParentSignup(),
-        '/parentprofile': (context) => ParentProfile(),
-        '/jobpost': (context) => JobPost(),
-        '/jobdetails': (context) => JobDetails(),
+      onGenerateRoute: (RouteSettings settings) {
+        var args = settings.arguments;
+        switch (settings.name) {
+          case '/':
+            return MaterialPageRoute(builder: (context) => InitialPage());
+          case '/home':
+            return MaterialPageRoute(builder: (context) => Home());
+          case '/sitterlogin':
+            return MaterialPageRoute(builder: (context) => SitterLogin());
+          case '/sittersignup':
+            return MaterialPageRoute(builder: (context) => SitterSignup());
+          case '/sitterprofile':
+            return MaterialPageRoute(builder: (context) => SitterProfile());
+          case '/parentlogin':
+            return MaterialPageRoute(builder: (context) => ParentLogin());
+          case '/parentsignup':
+            return MaterialPageRoute(builder: (context) => ParentSignup());
+          case '/parentprofile':
+            return MaterialPageRoute(builder: (context) => ParentProfile());
+          case '/jobpost':
+            return MaterialPageRoute(builder: (context) => JobPost());
+          case '/jobdetails':
+            return MaterialPageRoute(
+              builder: (context) => JobDetails(
+                job: args as Job,
+              ),
+            );
+          default:
+            return MaterialPageRoute(builder: (context) => InitialPage());
+        }
       },
     );
   }
