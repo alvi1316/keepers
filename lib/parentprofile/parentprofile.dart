@@ -19,9 +19,8 @@ class ParentProfileState extends ConsumerState<ParentProfile> {
   @override
   void initState() {
     super.initState();
-    var session = ref.read(sessionProvider);
     var db = Database();
-    db.getParentDetails(session.phone).then(
+    db.getParentDetails(ref.read(sessionProvider).phone).then(
       (value) {
         setState(() {
           parent = value;

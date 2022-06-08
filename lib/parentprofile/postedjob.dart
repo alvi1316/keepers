@@ -39,109 +39,132 @@ class PostedJobState extends ConsumerState<PostedJob> {
               return CircularProgressIndicator();
             } else if (snapshot.hasData) {
               var job = snapshot.data;
-              return Column(
-                children: job?.map(
-                      (e) {
-                        return Column(
-                          children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(10),
-                                ),
+
+              if (job == null ? true : job.isEmpty) {
+                return Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(10),
+                    ),
+                  ),
+                  child: Card(
+                    elevation: 5,
+                    shape: RoundedRectangleBorder(
+                      side: BorderSide(
+                        color: Colors.black,
+                      ),
+                      borderRadius: const BorderRadius.all(Radius.circular(12)),
+                    ),
+                    child: ListTile(
+                      title: Text(
+                        "No job posted yet",
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                );
+              } else {
+                return Column(
+                    children: job.map(
+                  (e) {
+                    return Column(
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(10),
+                            ),
+                          ),
+                          child: Card(
+                            elevation: 5,
+                            shape: RoundedRectangleBorder(
+                              side: BorderSide(
+                                color: Colors.black,
                               ),
-                              child: Card(
-                                elevation: 5,
-                                shape: RoundedRectangleBorder(
-                                  side: BorderSide(
-                                    color: Colors.black,
-                                  ),
-                                  borderRadius: const BorderRadius.all(
-                                      Radius.circular(12)),
-                                ),
-                                child: ListTile(
-                                  onTap: () {
-                                    Navigator.pushNamed(
-                                      context,
-                                      '/jobdetails',
-                                      arguments: e,
-                                    );
-                                  },
-                                  title: Text(
-                                    e.postedBy ?? "",
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
-                                  ),
-                                  subtitle: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(12)),
+                            ),
+                            child: ListTile(
+                              onTap: () {
+                                Navigator.pushNamed(
+                                  context,
+                                  '/jobdetails',
+                                  arguments: e,
+                                );
+                              },
+                              title: Text(
+                                e.postedBy ?? "",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
                                     children: [
-                                      Row(
-                                        children: [
-                                          Text(
-                                            "Child Name:",
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                          Text(e.childName ?? ""),
-                                        ],
+                                      Text(
+                                        "Child Name:",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold),
                                       ),
-                                      Row(
-                                        children: [
-                                          Text(
-                                            "Age:",
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                          Text("${e.age ?? ""}"),
-                                        ],
-                                      ),
-                                      Row(
-                                        children: [
-                                          Text(
-                                            "Week Days:",
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                          Text(e.weekdays ?? ""),
-                                        ],
-                                      ),
-                                      Row(
-                                        children: [
-                                          Text(
-                                            "Time:",
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                          Text(
-                                              "${e.startTime ?? ""} - ${e.endTime ?? ""}"),
-                                        ],
-                                      ),
-                                      Row(
-                                        children: [
-                                          Text(
-                                            "Offered Salary:",
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                          Text("${e.salary ?? ""}"),
-                                        ],
-                                      ),
+                                      Text(e.childName ?? ""),
                                     ],
                                   ),
-                                ),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        "Age:",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      Text("${e.age ?? ""}"),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        "Week Days:",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      Text(e.weekdays ?? ""),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        "Time:",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      Text(
+                                          "${e.startTime ?? ""} - ${e.endTime ?? ""}"),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        "Offered Salary:",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      Text("${e.salary ?? ""}"),
+                                    ],
+                                  ),
+                                ],
                               ),
                             ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                          ],
-                        );
-                      },
-                    ).toList() ??
-                    [],
-              );
+                          ),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                      ],
+                    );
+                  },
+                ).toList());
+              }
             } else {
               return CircularProgressIndicator();
             }

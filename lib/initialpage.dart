@@ -8,19 +8,17 @@ import 'package:keeper/sitterprofile.dart';
 class InitialPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    Widget val = Home();
     var temp = ref.watch(sessionProvider);
     if (temp.isLoggedIn) {
       if (temp.userType == "parent") {
-        val = ParentProfile();
+        return ParentProfile();
       } else if (temp.userType == "sitter") {
-        val = SitterProfile();
+        return SitterProfile();
       } else {
-        val = Home();
+        return Home();
       }
     } else {
-      val = Home();
+      return Home();
     }
-    return val;
   }
 }

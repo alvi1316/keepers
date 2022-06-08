@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:keeper/database/database.dart';
 import 'package:keeper/database/providers.dart';
 import 'package:keeper/models/job.dart';
 import 'package:keeper/widgets/drawer.dart';
@@ -156,6 +157,86 @@ class JobDetails extends ConsumerWidget {
                           onPressed: () {},
                         ),
                       ),
+                    if (ref.read(sessionProvider).name == job.postedBy)
+                      ListTile(
+                        title: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            primary: Colors.red,
+                            shape: RoundedRectangleBorder(
+                              side: BorderSide(
+                                  color: Colors.grey[700]!, width: 1),
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(10),
+                              ),
+                            ),
+                          ),
+                          child: Text("Delete"),
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              barrierDismissible: false,
+                              builder: (_) => AlertDialog(
+                                title: Text(
+                                  "Do you really want to delete this job post?",
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () async {
+                                      var db = Database();
+                                      Navigator.pop(context);
+                                      if (await db.deleteJob(job.id ?? "")) {
+                                        showDialog(
+                                          context: context,
+                                          barrierDismissible: false,
+                                          builder: (_) => AlertDialog(
+                                            title: Text(
+                                              "Successful!",
+                                            ),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                  Navigator.pop(context);
+                                                },
+                                                child: Text("Okay"),
+                                              )
+                                            ],
+                                          ),
+                                        );
+                                      } else {
+                                        showDialog(
+                                          context: context,
+                                          barrierDismissible: false,
+                                          builder: (_) => AlertDialog(
+                                            title: Text(
+                                              "Failed!",
+                                            ),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                },
+                                                child: Text("Okay"),
+                                              )
+                                            ],
+                                          ),
+                                        );
+                                      }
+                                    },
+                                    child: Text("Yes"),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text("No"),
+                                  )
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      ),
                     SizedBox(height: 10),
                   ],
                 ),
@@ -187,34 +268,41 @@ class JobDetails extends ConsumerWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Card(
-                      elevation: 5,
-                      shape: RoundedRectangleBorder(
-                        side: BorderSide(
-                          color: Colors.black,
+                    if (job.appliedBy != null ? job.appliedBy!.isEmpty : false)
+                      Card(
+                        elevation: 5,
+                        shape: RoundedRectangleBorder(
+                          side: BorderSide(
+                            color: Colors.black,
+                          ),
+                          borderRadius: BorderRadius.all(Radius.circular(12)),
                         ),
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(12)),
-                      ),
-                      child: ListTile(
-                        title: Text('Potato'),
-                        subtitle: Text("Rating: 3.5"),
-                      ),
-                    ),
-                    Card(
-                      elevation: 5,
-                      shape: RoundedRectangleBorder(
-                        side: BorderSide(
-                          color: Colors.black,
+                        child: ListTile(
+                          title: Text(
+                            "No applicants yet!",
+                            textAlign: TextAlign.center,
+                          ),
                         ),
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(12)),
                       ),
-                      child: ListTile(
-                        title: Text('Tomato'),
-                        subtitle: Text("Rating: 2.5"),
-                      ),
-                    ),
+                    ...job.appliedBy?.map(
+                          (e) {
+                            return Card(
+                              elevation: 5,
+                              shape: RoundedRectangleBorder(
+                                side: BorderSide(
+                                  color: Colors.black,
+                                ),
+                                borderRadius:
+                                    const BorderRadius.all(Radius.circular(12)),
+                              ),
+                              child: ListTile(
+                                title: Text(e["name"] ?? ""),
+                                subtitle: Text("Rating: ${e["rating"]}"),
+                              ),
+                            );
+                          },
+                        ).toList() ??
+                        [],
                   ],
                 ),
               ),

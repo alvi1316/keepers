@@ -59,7 +59,7 @@ class CustomDrawer extends ConsumerWidget {
                 var pref = await SharedPreferences.getInstance();
                 pref.clear();
                 ref.read(sessionProvider).update();
-                navigator.popUntil((route) => route.settings.name == '/');
+                navigator.pushNamedAndRemoveUntil('/', (route) => false);
               },
             ),
           if (logout)

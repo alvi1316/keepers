@@ -1,4 +1,5 @@
 class Job {
+  String? id;
   String? postedBy;
   String? childName;
   int? age;
@@ -7,11 +8,12 @@ class Job {
   String? endTime;
   String? description;
   int? salary;
-  List<String>? appliedBy;
+  List<Map<String, String>>? appliedBy;
   String? selected;
   bool? approved;
 
   Job({
+    this.id,
     this.postedBy,
     this.childName,
     this.age,
