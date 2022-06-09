@@ -17,7 +17,7 @@ class JobDetails extends ConsumerWidget {
         backgroundColor: Colors.pink[800],
         title: Text("Job Details"),
       ),
-      drawer: CustomDrawer(logout: true, jobpost: false),
+      drawer: CustomDrawer(logout: true, jobpost: false, jobDashBoard: false),
       body: Container(
         padding: EdgeInsets.only(left: 20, right: 20),
         color: Color.fromRGBO(87, 24, 158, 82),

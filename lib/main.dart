@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:keeper/home.dart';
 import 'package:keeper/initialpage.dart';
+import 'package:keeper/jobdashboard.dart';
 import 'package:keeper/jobdetails.dart';
 import 'package:keeper/jobpost/jobpost.dart';
 import 'package:keeper/models/job.dart';
@@ -55,6 +56,8 @@ class MyApp extends StatelessWidget {
                 job: args as Job,
               ),
             );
+          case '/jobdashboard':
+            return MaterialPageRoute(builder: (context) => JobDashBoard());
           default:
             return MaterialPageRoute(builder: (context) => InitialPage());
         }

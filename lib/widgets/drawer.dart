@@ -6,11 +6,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 class CustomDrawer extends ConsumerWidget {
   final bool logout;
   final bool jobpost;
+  final bool jobDashBoard;
 
   const CustomDrawer({
     Key? key,
     required this.logout,
     required this.jobpost,
+    required this.jobDashBoard,
   }) : super(key: key);
 
   @override
@@ -44,6 +46,21 @@ class CustomDrawer extends ConsumerWidget {
               },
             ),
           if (jobpost)
+            SizedBox(
+              height: 10,
+            ),
+          if (jobDashBoard)
+            ListTile(
+              shape: RoundedRectangleBorder(
+                side: BorderSide(color: Colors.pink, width: 2),
+                borderRadius: BorderRadius.circular(25),
+              ),
+              title: Text('Job Dash Board'),
+              onTap: () {
+                Navigator.pushNamed(context, '/jobdashboard');
+              },
+            ),
+          if (jobDashBoard)
             SizedBox(
               height: 10,
             ),

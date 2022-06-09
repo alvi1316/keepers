@@ -97,6 +97,32 @@ class Database {
     });
   }
 
+  Stream<List<Job>> getAvailableJob() {
+    return FirebaseFirestore.instance
+        .collection('job')
+        .snapshots()
+        .map((event) {
+      return event.docs.map((e) {
+        return Job(
+          id: e.id,
+          postedBy: e.get("postedBy"),
+          childName: e.get("childName"),
+          age: e.get("age"),
+          weekdays: e.get("weekdays"),
+          startTime: e.get("startTime"),
+          endTime: e.get("endTime"),
+          salary: e.get("salary"),
+          appliedBy: (e.get("appliedBy") as List)
+              .map((item) => item as Map<String, String>)
+              .toList(),
+          approved: e.get("approved"),
+          description: e.get("description"),
+          selected: e.get("selected"),
+        );
+      }).toList();
+    });
+  }
+
   Future<bool> deleteJob(String id) async {
     return await FirebaseFirestore.instance
         .collection('job')

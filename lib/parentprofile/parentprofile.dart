@@ -36,7 +36,11 @@ class ParentProfileState extends ConsumerState<ParentProfile> {
         backgroundColor: Colors.pink[800],
         title: Text("Parent Profile"),
       ),
-      drawer: CustomDrawer(logout: true, jobpost: true),
+      drawer: CustomDrawer(
+        logout: true,
+        jobpost: true,
+        jobDashBoard: false,
+      ),
       body: Container(
         padding: EdgeInsets.only(left: 20, right: 20),
         color: Color.fromRGBO(87, 24, 158, 82),
