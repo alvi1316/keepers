@@ -5,13 +5,36 @@ import 'package:keeper/database/providers.dart';
 import 'package:keeper/models/job.dart';
 import 'package:keeper/widgets/drawer.dart';
 
-class JobDetails extends ConsumerWidget {
-  final Job job;
-
-  const JobDetails({super.key, required this.job});
+// ignore: must_be_immutable
+class JobDetails extends ConsumerStatefulWidget {
+  Job job;
+  JobDetails({Key? key, required this.job}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  JobDetailsState createState() => JobDetailsState();
+}
+
+class JobDetailsState extends ConsumerState<JobDetails> {
+  void showDialogeBox(BuildContext context, String msg) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => AlertDialog(
+        title: Text(msg),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Text("Okay!"),
+          )
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.pink[800],
@@ -64,7 +87,7 @@ class JobDetails extends ConsumerWidget {
                         ),
                         SizedBox(width: 5),
                         Text(
-                          job.postedBy ?? "",
+                          widget.job.postedBy ?? "",
                           style: TextStyle(color: Colors.grey[600]),
                         )
                       ],
@@ -83,7 +106,7 @@ class JobDetails extends ConsumerWidget {
                         ),
                         SizedBox(width: 5),
                         Text(
-                          job.childName ?? "",
+                          widget.job.childName ?? "",
                           style: TextStyle(color: Colors.grey[600]),
                         ),
                       ],
@@ -102,14 +125,14 @@ class JobDetails extends ConsumerWidget {
                         ),
                         SizedBox(width: 5),
                         Text(
-                          "${job.age ?? ""}",
+                          "${widget.job.age ?? ""}",
                           style: TextStyle(color: Colors.grey[600]),
                         )
                       ],
                     ),
                     ListTile(
                       title: Text('Week days'),
-                      subtitle: Text(job.weekdays ?? ""),
+                      subtitle: Text(widget.job.weekdays ?? ""),
                     ),
                     ListTile(
                       title: Text('Time'),
@@ -117,12 +140,12 @@ class JobDetails extends ConsumerWidget {
                         children: [
                           Row(children: [
                             Text("Start Time:"),
-                            Text(job.startTime ?? "")
+                            Text(widget.job.startTime ?? "")
                           ]),
                           SizedBox(height: 5),
                           Row(children: [
                             Text("End Time:"),
-                            Text(job.endTime ?? ""),
+                            Text(widget.job.endTime ?? ""),
                           ]),
                         ],
                       ),
@@ -133,182 +156,269 @@ class JobDetails extends ConsumerWidget {
                     ListTile(
                       title: Text('Job description'),
                       subtitle: Text(
-                        job.description ?? "",
+                        widget.job.description ?? "",
                         textAlign: TextAlign.justify,
                       ),
                     ),
                     ListTile(
                       title: Text('Salary'),
-                      subtitle: Text("${job.salary ?? ""}"),
+                      subtitle: Text("${widget.job.salary ?? ""}"),
                     ),
-                    if (ref.read(sessionProvider).name != job.postedBy)
-                      ListTile(
-                        title: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              side: BorderSide(
-                                  color: Colors.grey[700]!, width: 1),
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(10),
-                              ),
-                            ),
-                          ),
-                          child: Text("Apply"),
-                          onPressed: () {},
-                        ),
-                      ),
-                    if (ref.read(sessionProvider).name == job.postedBy)
-                      ListTile(
-                        title: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            primary: Colors.red,
-                            shape: RoundedRectangleBorder(
-                              side: BorderSide(
-                                  color: Colors.grey[700]!, width: 1),
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(10),
-                              ),
-                            ),
-                          ),
-                          child: Text("Delete"),
-                          onPressed: () {
-                            showDialog(
-                              context: context,
-                              barrierDismissible: false,
-                              builder: (_) => AlertDialog(
-                                title: Text(
-                                  "Do you really want to delete this job post?",
-                                ),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () async {
-                                      var db = Database();
-                                      Navigator.pop(context);
-                                      if (await db.deleteJob(job.id ?? "")) {
-                                        showDialog(
-                                          context: context,
-                                          barrierDismissible: false,
-                                          builder: (_) => AlertDialog(
-                                            title: Text(
-                                              "Successful!",
-                                            ),
-                                            actions: [
-                                              TextButton(
-                                                onPressed: () {
-                                                  Navigator.pop(context);
-                                                  Navigator.pop(context);
-                                                },
-                                                child: Text("Okay"),
-                                              )
-                                            ],
-                                          ),
-                                        );
-                                      } else {
-                                        showDialog(
-                                          context: context,
-                                          barrierDismissible: false,
-                                          builder: (_) => AlertDialog(
-                                            title: Text(
-                                              "Failed!",
-                                            ),
-                                            actions: [
-                                              TextButton(
-                                                onPressed: () {
-                                                  Navigator.pop(context);
-                                                },
-                                                child: Text("Okay"),
-                                              )
-                                            ],
-                                          ),
-                                        );
-                                      }
-                                    },
-                                    child: Text("Yes"),
+                    ...(() {
+                      var appliedBy = widget.job.appliedBy;
+                      var index = 0;
+                      var isPresent = false;
+                      if (appliedBy != null) {
+                        for (Map<String, String>? m in appliedBy) {
+                          if (m!["phone"] == ref.read(sessionProvider).phone) {
+                            isPresent = true;
+                            break;
+                          }
+                          index++;
+                        }
+                      }
+
+                      if (ref.read(sessionProvider).userType == "sitter") {
+                        if (!isPresent) {
+                          return <Widget>[
+                            ListTile(
+                              title: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                    side: BorderSide(
+                                        color: Colors.grey[700]!, width: 1),
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(10),
+                                    ),
                                   ),
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.pop(context);
+                                ),
+                                child: Text("Apply"),
+                                onPressed: () async {
+                                  var db = Database();
+                                  var job = widget.job;
+                                  widget.job.appliedBy?.add(
+                                    {
+                                      "name": ref.read(sessionProvider).name,
+                                      "phone": ref.read(sessionProvider).phone,
+                                      "rating":
+                                          ref.read(sessionProvider).rating,
                                     },
-                                    child: Text("No"),
-                                  )
-                                ],
+                                  );
+                                  if (await db.applyForJob(widget.job)) {
+                                    showDialogeBox(context, "Successful!");
+                                    setState(() {});
+                                  } else {
+                                    showDialogeBox(context, "Failed!");
+                                    widget.job = job;
+                                  }
+                                },
                               ),
-                            );
-                          },
-                        ),
-                      ),
+                            )
+                          ];
+                        }
+
+                        return <Widget>[
+                          ListTile(
+                            title: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                primary: Colors.red,
+                                shape: RoundedRectangleBorder(
+                                  side: BorderSide(
+                                      color: Colors.grey[700]!, width: 1),
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(10),
+                                  ),
+                                ),
+                              ),
+                              child: Text("Cancel Application"),
+                              onPressed: () async {
+                                var job = widget.job;
+                                widget.job.appliedBy?.removeAt(index);
+                                Database db = Database();
+                                if (await db
+                                    .cancelApplicationForJob(widget.job)) {
+                                  showDialogeBox(
+                                      context, "Application canceled!");
+                                  setState(() {});
+                                } else {
+                                  widget.job = job;
+                                  showDialogeBox(context, "Failed!");
+                                }
+                              },
+                            ),
+                          )
+                        ];
+                      } else {
+                        if (ref.read(sessionProvider).phone ==
+                            widget.job.phone) {
+                          return <Widget>[
+                            ListTile(
+                              title: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  primary: Colors.red,
+                                  shape: RoundedRectangleBorder(
+                                    side: BorderSide(
+                                        color: Colors.grey[700]!, width: 1),
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(10),
+                                    ),
+                                  ),
+                                ),
+                                child: Text("Delete"),
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    barrierDismissible: false,
+                                    builder: (_) => AlertDialog(
+                                      title: Text(
+                                        "Do you really want to delete this job post?",
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () async {
+                                            var db = Database();
+                                            Navigator.pop(context);
+                                            if (await db.deleteJob(
+                                                widget.job.id ?? "")) {
+                                              showDialog(
+                                                context: context,
+                                                barrierDismissible: false,
+                                                builder: (_) => AlertDialog(
+                                                  title: Text(
+                                                    "Successful!",
+                                                  ),
+                                                  actions: [
+                                                    TextButton(
+                                                      onPressed: () {
+                                                        Navigator.pop(context);
+                                                        Navigator.pop(context);
+                                                      },
+                                                      child: Text("Okay"),
+                                                    )
+                                                  ],
+                                                ),
+                                              );
+                                            } else {
+                                              showDialog(
+                                                context: context,
+                                                barrierDismissible: false,
+                                                builder: (_) => AlertDialog(
+                                                  title: Text(
+                                                    "Failed!",
+                                                  ),
+                                                  actions: [
+                                                    TextButton(
+                                                      onPressed: () {
+                                                        Navigator.pop(context);
+                                                      },
+                                                      child: Text("Okay"),
+                                                    )
+                                                  ],
+                                                ),
+                                              );
+                                            }
+                                          },
+                                          child: Text("Yes"),
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          child: Text("No"),
+                                        )
+                                      ],
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ];
+                        }
+                        return <Widget>[];
+                      }
+                    }()),
                     SizedBox(height: 10),
                   ],
                 ),
               ),
               SizedBox(height: 70),
-              Container(
-                alignment: Alignment.center,
-                width: double.infinity,
-                height: 50,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(10),
-                  ),
-                ),
-                child: Text(
-                  "Applicants",
-                  style: TextStyle(fontSize: 26),
-                ),
-              ),
-              SizedBox(height: 10),
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(10),
-                  ),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    if (job.appliedBy != null ? job.appliedBy!.isEmpty : false)
-                      Card(
-                        elevation: 5,
-                        shape: RoundedRectangleBorder(
-                          side: BorderSide(
-                            color: Colors.black,
-                          ),
-                          borderRadius: BorderRadius.all(Radius.circular(12)),
-                        ),
-                        child: ListTile(
-                          title: Text(
-                            "No applicants yet!",
-                            textAlign: TextAlign.center,
-                          ),
+              ...(() {
+                if (ref.read(sessionProvider).phone == widget.job.phone &&
+                    ref.read(sessionProvider).userType == "parent") {
+                  return <Widget>[
+                    Container(
+                      alignment: Alignment.center,
+                      width: double.infinity,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(10),
                         ),
                       ),
-                    ...job.appliedBy?.map(
-                          (e) {
-                            return Card(
+                      child: Text(
+                        "Applicants",
+                        style: TextStyle(fontSize: 26),
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(10),
+                        ),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          if (widget.job.appliedBy != null
+                              ? widget.job.appliedBy!.isEmpty
+                              : false)
+                            Card(
                               elevation: 5,
                               shape: RoundedRectangleBorder(
                                 side: BorderSide(
                                   color: Colors.black,
                                 ),
                                 borderRadius:
-                                    const BorderRadius.all(Radius.circular(12)),
+                                    BorderRadius.all(Radius.circular(12)),
                               ),
                               child: ListTile(
-                                title: Text(e["name"] ?? ""),
-                                subtitle: Text("Rating: ${e["rating"]}"),
+                                title: Text(
+                                  "No applicants yet!",
+                                  textAlign: TextAlign.center,
+                                ),
                               ),
-                            );
-                          },
-                        ).toList() ??
-                        [],
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: 70,
-              ),
+                            ),
+                          ...widget.job.appliedBy?.map(
+                                (e) {
+                                  return Card(
+                                    elevation: 5,
+                                    shape: RoundedRectangleBorder(
+                                      side: BorderSide(
+                                        color: Colors.black,
+                                      ),
+                                      borderRadius: const BorderRadius.all(
+                                          Radius.circular(12)),
+                                    ),
+                                    child: ListTile(
+                                      title: Text(e["name"] ?? ""),
+                                      subtitle: Text("Rating: ${e["rating"]}"),
+                                    ),
+                                  );
+                                },
+                              ).toList() ??
+                              [],
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 70),
+                  ];
+                } else {
+                  return <Widget>[];
+                }
+              }()),
             ],
           ),
         ),

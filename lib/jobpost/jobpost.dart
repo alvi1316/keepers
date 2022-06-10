@@ -296,6 +296,7 @@ class JobPostState extends ConsumerState {
                               var db = Database();
                               var job = Job(
                                 postedBy: parent.name,
+                                phone: parent.phone,
                                 childName: childName,
                                 age: int.parse(age.text),
                                 weekdays: weekdays,

@@ -33,7 +33,7 @@ class PostedJobState extends ConsumerState<PostedJob> {
         ),
         SizedBox(height: 10),
         StreamBuilder(
-          stream: Database().getPostedJob(ref.read(sessionProvider).name),
+          stream: Database().getPostedJob(ref.read(sessionProvider).phone),
           builder: (BuildContext context, AsyncSnapshot<List<Job>> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return CircularProgressIndicator();

@@ -7,10 +7,15 @@ import 'package:keeper/models/sitter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Database {
+  var instance = FirebaseFirestore.instance;
+  Database() {
+    instance.settings = const Settings(persistenceEnabled: false);
+  }
+
   //----------------------------------Parent------------------------------------
 
   Future<bool> loginParent(String phone, String password) async {
-    var result = await FirebaseFirestore.instance
+    var result = await instance
         .collection('parent')
         .where('phone', isEqualTo: phone)
         .where('password', isEqualTo: password)
@@ -19,6 +24,8 @@ class Database {
       var prefs = await SharedPreferences.getInstance();
       await prefs.setString('phone', phone);
       await prefs.setString('name', result.docs.first.data()["name"]);
+      await prefs.setString(
+          'rating', (result.docs.first.data()["rating"] as double).toString());
       await prefs.setBool('isLoggedIn', true);
       await prefs.setString('userType', 'parent');
     }
@@ -26,7 +33,7 @@ class Database {
   }
 
   Future<bool> signupParent(Parent parent) async {
-    return await FirebaseFirestore.instance
+    return await instance
         .collection('parent')
         .add(parent.getMap())
         .then((value) {
@@ -38,7 +45,7 @@ class Database {
   }
 
   Future<Parent> getParentDetails(String phone) async {
-    return FirebaseFirestore.instance
+    return instance
         .collection('parent')
         .where('phone', isEqualTo: phone)
         .get()
@@ -62,34 +69,45 @@ class Database {
   }
 
   Future<bool> postJob(Job job) async {
-    return await FirebaseFirestore.instance
-        .collection('job')
-        .add(job.getMap())
-        .then((value) {
+    return await instance.collection('job').add(job.getMap()).then((value) {
       return true;
     }).onError((error, stackTrace) => false);
   }
 
-  Stream<List<Job>> getPostedJob(String name) {
-    return FirebaseFirestore.instance
+  Stream<List<Job>> getPostedJob(String phone) {
+    return instance
         .collection('job')
-        .where('postedBy', isEqualTo: name)
+        .where('phone', isEqualTo: phone)
         .snapshots()
         .map((event) {
       return event.docs.map((e) {
+        List<Map<String, String>> l = [];
+        var tl = e.get("appliedBy") as List;
+        for (var t in tl) {
+          var t1 = t as Map;
+          var name1 = t1["name"] as String;
+          var phone1 = t1["phone"] as String;
+          var rating1 = t1["rating"] as String;
+          Map<String, String> m = {
+            "name": name1,
+            "phone": phone1,
+            "rating": rating1
+          };
+          l.add(m);
+        }
+
         return Job(
           id: e.id,
           postedBy: e.get("postedBy"),
+          phone: e.get("phone"),
           childName: e.get("childName"),
           age: e.get("age"),
           weekdays: e.get("weekdays"),
           startTime: e.get("startTime"),
           endTime: e.get("endTime"),
           salary: e.get("salary"),
-          appliedBy: (e.get("appliedBy") as List)
-              .map((item) => item as Map<String, String>)
-              .toList(),
           approved: e.get("approved"),
+          appliedBy: l,
           description: e.get("description"),
           selected: e.get("selected"),
         );
@@ -98,23 +116,33 @@ class Database {
   }
 
   Stream<List<Job>> getAvailableJob() {
-    return FirebaseFirestore.instance
-        .collection('job')
-        .snapshots()
-        .map((event) {
+    return instance.collection('job').snapshots().map((event) {
       return event.docs.map((e) {
+        List<Map<String, String>> l = [];
+        var tl = e.get("appliedBy") as List;
+        for (var t in tl) {
+          var t1 = t as Map;
+          var name1 = t1["name"] as String;
+          var phone1 = t1["phone"] as String;
+          var rating1 = t1["rating"] as String;
+          Map<String, String> m = {
+            "name": name1,
+            "phone": phone1,
+            "rating": rating1
+          };
+          l.add(m);
+        }
         return Job(
           id: e.id,
           postedBy: e.get("postedBy"),
+          phone: e.get("phone"),
           childName: e.get("childName"),
           age: e.get("age"),
           weekdays: e.get("weekdays"),
           startTime: e.get("startTime"),
           endTime: e.get("endTime"),
           salary: e.get("salary"),
-          appliedBy: (e.get("appliedBy") as List)
-              .map((item) => item as Map<String, String>)
-              .toList(),
+          appliedBy: l,
           approved: e.get("approved"),
           description: e.get("description"),
           selected: e.get("selected"),
@@ -124,7 +152,7 @@ class Database {
   }
 
   Future<bool> deleteJob(String id) async {
-    return await FirebaseFirestore.instance
+    return await instance
         .collection('job')
         .doc(id)
         .delete()
@@ -135,7 +163,7 @@ class Database {
   //--------------------------------Sitter--------------------------------------
 
   Future<bool> loginSitter(String phone, String password) async {
-    var result = await FirebaseFirestore.instance
+    var result = await instance
         .collection('sitter')
         .where('phone', isEqualTo: phone)
         .where('password', isEqualTo: password)
@@ -144,6 +172,8 @@ class Database {
       var prefs = await SharedPreferences.getInstance();
       await prefs.setString('phone', phone);
       await prefs.setString('name', result.docs.first.data()["name"]);
+      await prefs.setString(
+          'rating', (result.docs.first.data()["rating"] as double).toString());
       await prefs.setBool('isLoggedIn', true);
       await prefs.setString('userType', 'sitter');
     }
@@ -151,7 +181,7 @@ class Database {
   }
 
   Future<bool> signupSitter(Sitter sitter) async {
-    return await FirebaseFirestore.instance
+    return await instance
         .collection('sitter')
         .add(sitter.getMap())
         .then((value) {
@@ -160,7 +190,7 @@ class Database {
   }
 
   Future<Sitter> getSitterDetails(String phone) async {
-    return FirebaseFirestore.instance
+    return instance
         .collection('sitter')
         .where('phone', isEqualTo: phone)
         .get()
@@ -180,11 +210,29 @@ class Database {
     );
   }
 
+  Future<bool> applyForJob(Job job) {
+    return instance
+        .collection("job")
+        .doc(job.id)
+        .update(job.getMap())
+        .then((value) => true)
+        .onError((error, stackTrace) => false);
+  }
+
+  Future<bool> cancelApplicationForJob(Job job) {
+    return instance
+        .collection("job")
+        .doc(job.id)
+        .update(job.getMap())
+        .then((value) => true)
+        .onError((error, stackTrace) => false);
+  }
+
   //----------------------------------Other-------------------------------------
 
   Future<bool> fieldIsUnique(
       String userType, String field, String value) async {
-    var doc = await FirebaseFirestore.instance
+    var doc = await instance
         .collection(userType)
         .where(field, isEqualTo: value)
         .get();

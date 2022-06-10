@@ -1,6 +1,7 @@
 class Job {
   String? id;
   String? postedBy;
+  String? phone;
   String? childName;
   int? age;
   String? weekdays;
@@ -14,6 +15,7 @@ class Job {
 
   Job({
     this.id,
+    this.phone,
     this.postedBy,
     this.childName,
     this.age,
@@ -30,6 +32,7 @@ class Job {
   Map<String, dynamic> getMap() {
     return {
       "postedBy": postedBy,
+      "phone": phone,
       "childName": childName,
       "age": age,
       "weekdays": weekdays,

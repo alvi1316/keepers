@@ -48,7 +48,13 @@ class _JobDashBoardState extends State<JobDashBoard> {
                 builder:
                     (BuildContext context, AsyncSnapshot<List<Job>> snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return CircularProgressIndicator();
+                    return SizedBox(
+                      height: 50,
+                      width: 50,
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    );
                   } else if (snapshot.hasData) {
                     var job = snapshot.data;
 
@@ -181,12 +187,15 @@ class _JobDashBoardState extends State<JobDashBoard> {
                       ).toList());
                     }
                   } else {
-                    return CircularProgressIndicator();
+                    return Center(
+                      child: Text(
+                        "Error!",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    );
                   }
                 },
               ),
-              SizedBox(height: 70),
-              SizedBox(height: 70),
               SizedBox(height: 70),
             ],
           ),

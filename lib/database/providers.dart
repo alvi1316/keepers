@@ -15,6 +15,7 @@ class SessionDetails extends ChangeNotifier {
   String userType = "";
   String name = "";
   String phone = "";
+  String rating = "";
 
   void update() async {
     var ref = await SharedPreferences.getInstance();
@@ -22,6 +23,7 @@ class SessionDetails extends ChangeNotifier {
     userType = ref.getString("userType") ?? "";
     name = ref.getString("name") ?? "";
     phone = ref.getString("phone") ?? "";
+    rating = ref.getString("rating") ?? "";
     notifyListeners();
   }
 }
