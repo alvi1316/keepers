@@ -12,7 +12,25 @@ class _SitterSignupState extends State<SitterSignup> {
   final TextEditingController nidCtrl = TextEditingController();
   final TextEditingController phoneCtrl = TextEditingController();
   final TextEditingController passCtrl = TextEditingController();
+  final TextEditingController bioCtrl = TextEditingController();
   final GlobalKey<FormState> formCtrl = GlobalKey<FormState>();
+
+  void showDialogeBox(
+      BuildContext context, String msg, final VoidCallback onPressed) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => AlertDialog(
+        title: Text(msg),
+        actions: [
+          TextButton(
+            onPressed: onPressed,
+            child: Text("Okay!"),
+          )
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -167,6 +185,36 @@ class _SitterSignupState extends State<SitterSignup> {
                         SizedBox(
                           height: 20,
                         ),
+                        SizedBox(
+                          width: 290,
+                          child: TextFormField(
+                            controller: bioCtrl,
+                            minLines: 3,
+                            maxLines: 10,
+                            validator: (value) {
+                              if (value == null) {
+                                return "Cannot be empty";
+                              } else if (value == "") {
+                                return "Cannot be empty";
+                              } else {
+                                return null;
+                              }
+                            },
+                            textAlign: TextAlign.center,
+                            decoration: InputDecoration(
+                              errorStyle: TextStyle(color: Colors.white),
+                              filled: true,
+                              fillColor: Colors.white,
+                              hintText: "Bio",
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(25),
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
                         ElevatedButton(
                           onPressed: () async {
                             if (formCtrl.currentState!.validate()) {
@@ -176,70 +224,47 @@ class _SitterSignupState extends State<SitterSignup> {
                                 nid: nidCtrl.text,
                                 phone: phoneCtrl.text,
                                 password: passCtrl.text,
+                                bio: bioCtrl.text,
                                 rating: 0,
                                 approved: false,
                                 suspended: false,
                               );
-                              if (await db.fieldIsUnique(
-                                      "sitter", "phone", phoneCtrl.text) &&
-                                  await db.fieldIsUnique(
-                                      "sitter", "nid", nidCtrl.text)) {
-                                if (await db.signupSitter(sitter)) {
-                                  showDialog(
-                                    context: context,
-                                    barrierDismissible: false,
-                                    builder: (_) => AlertDialog(
-                                      title: Text("Successful!"),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.pop(context);
-                                            Navigator.pop(context);
-                                          },
-                                          child: Text("Okay!"),
-                                        )
-                                      ],
-                                    ),
-                                  );
 
-                                  print("Success!");
-                                } else {
-                                  showDialog(
-                                    context: context,
-                                    barrierDismissible: false,
-                                    builder: (_) => AlertDialog(
-                                      title: Text("Failed!"),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.pop(context);
-                                          },
-                                          child: Text("Okay!"),
-                                        )
-                                      ],
-                                    ),
-                                  );
-
-                                  print("Failed!");
-                                }
-                              } else {
-                                showDialog(
-                                  context: context,
-                                  barrierDismissible: false,
-                                  builder: (_) => AlertDialog(
-                                    title: Text("Failed!"),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                        child: Text("Okay!"),
-                                      )
-                                    ],
-                                  ),
+                              if (!await db.fieldIsUnique(
+                                  "sitter", "phone", phoneCtrl.text)) {
+                                showDialogeBox(
+                                  context,
+                                  "Failed! Phone Already in use!",
+                                  () {
+                                    Navigator.pop(context);
+                                  },
                                 );
-
-                                print("Failed!");
+                              } else if (!await db.fieldIsUnique(
+                                  "sitter", "nid", nidCtrl.text)) {
+                                showDialogeBox(
+                                  context,
+                                  "Failed! Nid Already in use!",
+                                  () {
+                                    Navigator.pop(context);
+                                  },
+                                );
+                              } else if (await db.signupSitter(sitter)) {
+                                showDialogeBox(
+                                  context,
+                                  "Successful!",
+                                  () {
+                                    Navigator.pop(context);
+                                    Navigator.pop(context);
+                                  },
+                                );
+                              } else {
+                                showDialogeBox(
+                                  context,
+                                  "Failed!",
+                                  () {
+                                    Navigator.pop(context);
+                                  },
+                                );
                               }
                             }
                           },

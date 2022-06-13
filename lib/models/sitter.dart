@@ -3,6 +3,7 @@ class Sitter {
   String? nid;
   String? phone;
   String? password;
+  String? bio;
   double? rating;
   bool? approved;
   bool? suspended;
@@ -12,6 +13,7 @@ class Sitter {
     this.nid,
     this.phone,
     this.password,
+    this.bio,
     this.rating,
     this.approved,
     this.suspended,
@@ -23,6 +25,7 @@ class Sitter {
       "nid": nid,
       "phone": phone,
       "password": password,
+      "bio": bio,
       "rating": rating,
       "approved": approved,
       "suspended": suspended,

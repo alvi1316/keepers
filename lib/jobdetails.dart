@@ -402,9 +402,30 @@ class JobDetailsState extends ConsumerState<JobDetails> {
                                       borderRadius: const BorderRadius.all(
                                           Radius.circular(12)),
                                     ),
-                                    child: ListTile(
-                                      title: Text(e["name"] ?? ""),
-                                      subtitle: Text("Rating: ${e["rating"]}"),
+                                    child: Column(
+                                      children: [
+                                        ListTile(
+                                          title: Text(e["name"] ?? ""),
+                                          subtitle:
+                                              Text("Rating: ${e["rating"]}"),
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          children: <Widget>[
+                                            TextButton(
+                                              child: Text('View Profile'),
+                                              onPressed: () {/* ... */},
+                                            ),
+                                            const SizedBox(width: 8),
+                                            TextButton(
+                                              child: Text('Select'),
+                                              onPressed: () {/* ... */},
+                                            ),
+                                            const SizedBox(width: 8),
+                                          ],
+                                        ),
+                                      ],
                                     ),
                                   );
                                 },

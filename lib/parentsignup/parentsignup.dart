@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:keeper/database/database.dart';
 import 'package:keeper/models/parent.dart';
 import 'package:keeper/parentsignup/counter.dart';
+import 'package:keeper/parentsignup/sexpicker.dart';
 
 class ParentSignup extends StatefulWidget {
   @override
@@ -9,6 +10,7 @@ class ParentSignup extends StatefulWidget {
 }
 
 class _ParentSignupState extends State<ParentSignup> {
+  List<String> sex = ["Male", "Female"];
   final TextEditingController nameCtrl = TextEditingController();
   final TextEditingController nidCtrl = TextEditingController();
   final TextEditingController phoneCtrl = TextEditingController();
@@ -17,10 +19,32 @@ class _ParentSignupState extends State<ParentSignup> {
 
   List<TextEditingController> childCtrl = [
     TextEditingController(),
-    TextEditingController()
+    TextEditingController(),
+    TextEditingController(text: "Male"),
   ];
 
   List<Widget> childList = [];
+
+  void showDialogeBox(
+      BuildContext context, String msg, final VoidCallback onPressed) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => AlertDialog(
+        title: Text(msg),
+        actions: [
+          TextButton(
+            onPressed: onPressed,
+            child: Text("Okay!"),
+          )
+        ],
+      ),
+    );
+  }
+
+  void callBack(String str) {
+    childCtrl.last.text = str;
+  }
 
   _ParentSignupState() {
     childList.add(
@@ -88,6 +112,26 @@ class _ParentSignupState extends State<ParentSignup> {
         ),
       ),
     );
+    childList.add(
+      SizedBox(
+        height: 20,
+      ),
+    );
+
+    childList.add(
+      Container(
+        width: 290,
+        height: 55,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.all(
+            Radius.circular(50),
+          ),
+        ),
+        child: SexPicker(callback: callBack),
+      ),
+    );
+
     childList.add(
       SizedBox(
         height: 20,
@@ -172,11 +216,32 @@ class _ParentSignupState extends State<ParentSignup> {
             height: 20,
           ),
         );
+        childCtrl.add(TextEditingController());
+        childList.add(
+          Container(
+            width: 290,
+            height: 55,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.all(
+                Radius.circular(50),
+              ),
+            ),
+            child: SexPicker(callback: callBack),
+          ),
+        );
+        childList.add(
+          SizedBox(
+            height: 20,
+          ),
+        );
       } else {
         childList.removeLast();
         childList.removeLast();
         childList.removeLast();
         childList.removeLast();
+        childCtrl.removeLast();
+        childCtrl.removeLast();
         childCtrl.removeLast();
         childCtrl.removeLast();
       }
@@ -347,8 +412,9 @@ class _ParentSignupState extends State<ParentSignup> {
                               Map<String, Map> cd = {};
                               for (var i = 0; i < _count; i++) {
                                 var cdt = {
-                                  "name": childCtrl.elementAt(i * 2).text,
-                                  "age": childCtrl.elementAt((i * 2) + 1).text
+                                  "name": childCtrl.elementAt(i * 3).text,
+                                  "age": childCtrl.elementAt((i * 3) + 1).text,
+                                  "sex": childCtrl.elementAt((i * 3) + 2).text,
                                 };
                                 cd["$i"] = cdt;
                               }
@@ -365,59 +431,40 @@ class _ParentSignupState extends State<ParentSignup> {
                                 approved: false,
                                 suspended: false,
                               );
-                              if (await db.fieldIsUnique(
-                                      "parent", "phone", phoneCtrl.text) &&
-                                  await db.fieldIsUnique(
-                                      "parent", "nid", nidCtrl.text)) {
-                                if (await db.signupParent(parent)) {
-                                  showDialog(
-                                    context: context,
-                                    barrierDismissible: false,
-                                    builder: (_) => AlertDialog(
-                                      title: Text("Successful!"),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.pop(context);
-                                            Navigator.pop(context);
-                                          },
-                                          child: Text("Okay!"),
-                                        )
-                                      ],
-                                    ),
-                                  );
-                                } else {
-                                  showDialog(
-                                    context: context,
-                                    barrierDismissible: false,
-                                    builder: (_) => AlertDialog(
-                                      title: Text("Failed!"),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.pop(context);
-                                          },
-                                          child: Text("Okay!"),
-                                        )
-                                      ],
-                                    ),
-                                  );
-                                }
+                              if (!await db.fieldIsUnique(
+                                  "parent", "phone", phoneCtrl.text)) {
+                                showDialogeBox(
+                                  context,
+                                  "Failed! Phone already in use!",
+                                  () {
+                                    Navigator.pop(context);
+                                  },
+                                );
+                              } else if (!await db.fieldIsUnique(
+                                  "parent", "nid", nidCtrl.text)) {
+                                showDialogeBox(
+                                  context,
+                                  "Failed! Nid already in use!",
+                                  () {
+                                    Navigator.pop(context);
+                                  },
+                                );
+                              } else if (await db.signupParent(parent)) {
+                                showDialogeBox(
+                                  context,
+                                  "Successful!",
+                                  () {
+                                    Navigator.pop(context);
+                                    Navigator.pop(context);
+                                  },
+                                );
                               } else {
-                                showDialog(
-                                  context: context,
-                                  barrierDismissible: false,
-                                  builder: (_) => AlertDialog(
-                                    title: Text("Failed!"),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                        child: Text("Okay!"),
-                                      )
-                                    ],
-                                  ),
+                                showDialogeBox(
+                                  context,
+                                  "Failed!",
+                                  () {
+                                    Navigator.pop(context);
+                                  },
                                 );
                               }
                             }
