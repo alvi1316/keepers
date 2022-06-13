@@ -360,7 +360,7 @@ class JobPostState extends ConsumerState {
                                 description: description.text,
                                 appliedBy: [],
                                 approved: false,
-                                selected: "",
+                                selected: {},
                               );
                               if (await db.postJob(job)) {
                                 showSuccess(context, "Success!");

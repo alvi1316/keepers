@@ -111,7 +111,7 @@ class Database {
           approved: e.get("approved"),
           appliedBy: l,
           description: e.get("description"),
-          selected: e.get("selected"),
+          selected: Map.castFrom(e.get("selected")),
         );
       }).toList();
     });
@@ -134,6 +134,7 @@ class Database {
           };
           l.add(m);
         }
+
         return Job(
           id: e.id,
           postedBy: e.get("postedBy"),
@@ -149,7 +150,7 @@ class Database {
           appliedBy: l,
           approved: e.get("approved"),
           description: e.get("description"),
-          selected: e.get("selected"),
+          selected: Map.castFrom(e.get("selected")),
         );
       }).toList();
     });
@@ -160,6 +161,15 @@ class Database {
         .collection('job')
         .doc(id)
         .delete()
+        .then((value) => true)
+        .onError((error, stackTrace) => false);
+  }
+
+  Future<bool> selectApplicant(String id, Map<String, String> selected) async {
+    return await instance
+        .collection("job")
+        .doc(id)
+        .update({"selected": selected, "appliedBy": []})
         .then((value) => true)
         .onError((error, stackTrace) => false);
   }

@@ -12,7 +12,7 @@ class Job {
   String? description;
   int? salary;
   List<Map<String, String>>? appliedBy;
-  String? selected;
+  Map<String, String>? selected;
   bool? approved;
 
   Job({

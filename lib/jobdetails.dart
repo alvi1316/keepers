@@ -446,7 +446,30 @@ class JobDetailsState extends ConsumerState<JobDetails> {
                                             const SizedBox(width: 8),
                                             TextButton(
                                               child: Text('Select'),
-                                              onPressed: () {},
+                                              onPressed: () async {
+                                                var db = Database();
+                                                var sitter =
+                                                    await db.getSitterDetails(
+                                                        e["phone"] ?? "");
+                                                Map<String, String> selected = {
+                                                  "name": sitter.name ?? "",
+                                                  "phone": sitter.phone ?? "",
+                                                  "rating":
+                                                      "${sitter.rating ?? ""}",
+                                                };
+                                                if (await db.selectApplicant(
+                                                    widget.job.id ?? "",
+                                                    selected)) {
+                                                  if (!mounted) return;
+                                                  showDialogeBox(
+                                                      context, "Successful!");
+                                                  Navigator.pop(context);
+                                                } else {
+                                                  if (!mounted) return;
+                                                  showDialogeBox(
+                                                      context, "failed!");
+                                                }
+                                              },
                                             ),
                                             const SizedBox(width: 8),
                                           ],
