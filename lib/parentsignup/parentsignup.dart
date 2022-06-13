@@ -48,6 +48,20 @@ class _ParentSignupState extends State<ParentSignup> {
 
   _ParentSignupState() {
     childList.add(
+      Text(
+        "Details of child 1",
+        style: TextStyle(color: Colors.white),
+      ),
+    );
+    childList.add(
+      SizedBox(
+        width: 290,
+        child: Divider(
+          color: Colors.white,
+        ),
+      ),
+    );
+    childList.add(
       SizedBox(
         width: 290,
         child: TextFormField(
@@ -144,6 +158,21 @@ class _ParentSignupState extends State<ParentSignup> {
   void countCallback(count) {
     setState(() {
       if (count > _count) {
+        childList.add(
+          Text(
+            "Details of child ${_count + 1}",
+            style: TextStyle(color: Colors.white),
+          ),
+        );
+        childList.add(
+          SizedBox(
+            width: 290,
+            child: Divider(
+              color: Colors.white,
+            ),
+          ),
+        );
+
         childCtrl.add(TextEditingController());
 
         childList.add(
@@ -240,7 +269,10 @@ class _ParentSignupState extends State<ParentSignup> {
         childList.removeLast();
         childList.removeLast();
         childList.removeLast();
-        childCtrl.removeLast();
+        childList.removeLast();
+        childList.removeLast();
+        childList.removeLast();
+        childList.removeLast();
         childCtrl.removeLast();
         childCtrl.removeLast();
         childCtrl.removeLast();

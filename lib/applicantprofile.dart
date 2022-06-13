@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:keeper/database/database.dart';
-import 'package:keeper/database/providers.dart';
 import 'package:keeper/models/sitter.dart';
 import 'package:keeper/widgets/drawer.dart';
 
-class SitterProfile extends ConsumerStatefulWidget {
+class ApplicantProfile extends ConsumerStatefulWidget {
+  final String phone;
+  const ApplicantProfile({Key? key, required this.phone}) : super(key: key);
   @override
-  SitterProfileState createState() => SitterProfileState();
+  ApplicantProfileState createState() => ApplicantProfileState();
 }
 
-class SitterProfileState extends ConsumerState<SitterProfile> {
+class ApplicantProfileState extends ConsumerState<ApplicantProfile> {
   Sitter sitter = Sitter();
 
   @override
   void initState() {
     super.initState();
-    var session = ref.read(sessionProvider);
     var db = Database();
-    db.getSitterDetails(session.phone).then(
+    db.getSitterDetails(widget.phone).then(
       (value) {
         setState(() {
           sitter = value;
@@ -32,12 +32,12 @@ class SitterProfileState extends ConsumerState<SitterProfile> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.pink[800],
-        title: Text("Sitter Profile"),
+        title: Text("Applicant Profile"),
       ),
       drawer: CustomDrawer(
         logout: true,
         jobpost: false,
-        jobDashBoard: true,
+        jobDashBoard: false,
       ),
       body: Container(
         padding: EdgeInsets.only(left: 20, right: 20),
@@ -46,7 +46,6 @@ class SitterProfileState extends ConsumerState<SitterProfile> {
           child: ListView(
             shrinkWrap: true,
             children: [
-              SizedBox(height: 70),
               Container(
                 alignment: Alignment.center,
                 width: double.infinity,
@@ -58,7 +57,7 @@ class SitterProfileState extends ConsumerState<SitterProfile> {
                   ),
                 ),
                 child: Text(
-                  "Sitter Profile Details",
+                  "Applicant Profile Details",
                   style: TextStyle(fontSize: 26),
                 ),
               ),
@@ -86,20 +85,6 @@ class SitterProfileState extends ConsumerState<SitterProfile> {
                       child: ListTile(
                         title: Text('Name'),
                         subtitle: Text(sitter.name ?? ""),
-                      ),
-                    ),
-                    Card(
-                      elevation: 5,
-                      shape: RoundedRectangleBorder(
-                        side: BorderSide(
-                          color: Colors.black,
-                        ),
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(12)),
-                      ),
-                      child: ListTile(
-                        title: Text('Nid'),
-                        subtitle: Text(sitter.nid ?? ""),
                       ),
                     ),
                     Card(
@@ -164,8 +149,7 @@ class SitterProfileState extends ConsumerState<SitterProfile> {
                     ),
                   ],
                 ),
-              ),
-              SizedBox(height: 70),
+              )
             ],
           ),
         ),

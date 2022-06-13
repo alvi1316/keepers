@@ -95,6 +95,20 @@ class ChildDetailsState extends ConsumerState<ChildDetails> {
                                 subtitle: Text(entry.value["age"]),
                               ),
                             ),
+                            Card(
+                              elevation: 5,
+                              shape: RoundedRectangleBorder(
+                                side: BorderSide(
+                                  color: Colors.black,
+                                ),
+                                borderRadius:
+                                    const BorderRadius.all(Radius.circular(12)),
+                              ),
+                              child: ListTile(
+                                title: Text('Sex'),
+                                subtitle: Text(entry.value["sex"]),
+                              ),
+                            ),
                           ],
                         ),
                       ),

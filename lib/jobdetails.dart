@@ -130,6 +130,25 @@ class JobDetailsState extends ConsumerState<JobDetails> {
                         )
                       ],
                     ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Row(
+                      children: [
+                        SizedBox(
+                          width: 15,
+                        ),
+                        Text(
+                          "Sex:",
+                          style: TextStyle(fontSize: 16),
+                        ),
+                        SizedBox(width: 5),
+                        Text(
+                          widget.job.sex ?? "",
+                          style: TextStyle(color: Colors.grey[600]),
+                        )
+                      ],
+                    ),
                     ListTile(
                       title: Text('Week days'),
                       subtitle: Text(widget.job.weekdays ?? ""),
@@ -150,8 +169,9 @@ class JobDetailsState extends ConsumerState<JobDetails> {
                         ],
                       ),
                     ),
-                    SizedBox(
-                      height: 10,
+                    ListTile(
+                      title: Text('Address'),
+                      subtitle: Text(widget.job.address ?? ""),
                     ),
                     ListTile(
                       title: Text('Job description'),
@@ -415,12 +435,18 @@ class JobDetailsState extends ConsumerState<JobDetails> {
                                           children: <Widget>[
                                             TextButton(
                                               child: Text('View Profile'),
-                                              onPressed: () {/* ... */},
+                                              onPressed: () {
+                                                Navigator.pushNamed(
+                                                  context,
+                                                  "/applicantprofile",
+                                                  arguments: e["phone"],
+                                                );
+                                              },
                                             ),
                                             const SizedBox(width: 8),
                                             TextButton(
                                               child: Text('Select'),
-                                              onPressed: () {/* ... */},
+                                              onPressed: () {},
                                             ),
                                             const SizedBox(width: 8),
                                           ],

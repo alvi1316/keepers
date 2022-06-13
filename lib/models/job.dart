@@ -3,6 +3,8 @@ class Job {
   String? postedBy;
   String? phone;
   String? childName;
+  String? sex;
+  String? address;
   int? age;
   String? weekdays;
   String? startTime;
@@ -18,6 +20,7 @@ class Job {
     this.phone,
     this.postedBy,
     this.childName,
+    this.sex,
     this.age,
     this.weekdays,
     this.startTime,
@@ -27,6 +30,7 @@ class Job {
     this.appliedBy,
     this.selected,
     this.approved,
+    this.address,
   });
 
   Map<String, dynamic> getMap() {
@@ -35,6 +39,8 @@ class Job {
       "phone": phone,
       "childName": childName,
       "age": age,
+      "sex": sex,
+      "address": address,
       "weekdays": weekdays,
       "startTime": startTime,
       "endTime": endTime,

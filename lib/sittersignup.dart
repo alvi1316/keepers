@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:keeper/database/database.dart';
 import 'package:keeper/models/sitter.dart';
+import 'package:keeper/widgets/addresspicker.dart';
 
 class SitterSignup extends StatefulWidget {
   @override
@@ -11,9 +12,15 @@ class _SitterSignupState extends State<SitterSignup> {
   final TextEditingController nameCtrl = TextEditingController();
   final TextEditingController nidCtrl = TextEditingController();
   final TextEditingController phoneCtrl = TextEditingController();
+  final TextEditingController addressCtrl =
+      TextEditingController(text: "Dhanmondi");
   final TextEditingController passCtrl = TextEditingController();
   final TextEditingController bioCtrl = TextEditingController();
   final GlobalKey<FormState> formCtrl = GlobalKey<FormState>();
+
+  void callBack(String str) {
+    addressCtrl.text = str;
+  }
 
   void showDialogeBox(
       BuildContext context, String msg, final VoidCallback onPressed) {
@@ -153,6 +160,20 @@ class _SitterSignupState extends State<SitterSignup> {
                         SizedBox(
                           height: 20,
                         ),
+                        Container(
+                          width: 290,
+                          height: 55,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(50),
+                            ),
+                          ),
+                          child: AddressPicker(callback: callBack),
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
                         SizedBox(
                           width: 290,
                           child: TextFormField(
@@ -225,6 +246,7 @@ class _SitterSignupState extends State<SitterSignup> {
                                 phone: phoneCtrl.text,
                                 password: passCtrl.text,
                                 bio: bioCtrl.text,
+                                address: addressCtrl.text,
                                 rating: 0,
                                 approved: false,
                                 suspended: false,

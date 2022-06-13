@@ -4,6 +4,7 @@ import 'package:keeper/database/database.dart';
 import 'package:keeper/database/providers.dart';
 import 'package:keeper/models/job.dart';
 import 'package:keeper/models/parent.dart';
+import 'package:keeper/widgets/addresspicker.dart';
 import 'package:keeper/widgets/drawer.dart';
 import 'package:keeper/jobpost/timepicker.dart';
 import 'package:keeper/jobpost/weekday.dart';
@@ -20,8 +21,10 @@ class JobPostState extends ConsumerState {
   List<String> children = [];
 
   TextEditingController age = TextEditingController();
+  TextEditingController sex = TextEditingController();
   TextEditingController description = TextEditingController();
   TextEditingController salary = TextEditingController();
+  String address = "Dhanmondi";
   String weekdays = "";
   String startTime = "";
   String endTime = "";
@@ -37,6 +40,10 @@ class JobPostState extends ConsumerState {
 
   void callback2(String endTime) {
     this.endTime = endTime;
+  }
+
+  void callback3(String address) {
+    this.address = address;
   }
 
   void showError(BuildContext context, String text) {
@@ -94,6 +101,9 @@ class JobPostState extends ConsumerState {
           age.text = value.childDetails!.isEmpty
               ? ""
               : value.childDetails!.values.first["age"];
+          sex.text = value.childDetails!.isEmpty
+              ? ""
+              : value.childDetails!.values.first["sex"];
         });
       },
     );
@@ -165,6 +175,7 @@ class JobPostState extends ConsumerState {
                               parent.childDetails!.forEach((key, value) {
                                 if (value['name'] == val) {
                                   age.text = value['age'];
+                                  sex.text = value['sex'];
                                 }
                               });
                             });
@@ -178,19 +189,60 @@ class JobPostState extends ConsumerState {
                           ),
                         ),
                       ),
-                      ListTile(
-                        title: Text('Age'),
-                        subtitle: TextField(
-                          controller: age,
-                          readOnly: true,
-                          decoration: InputDecoration(
-                            filled: true,
-                            fillColor: Colors.white,
-                            hintText: "Age",
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(50),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          SizedBox(
+                            width: 160,
+                            child: ListTile(
+                              title: Text('Age'),
+                              subtitle: TextField(
+                                controller: age,
+                                readOnly: true,
+                                decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: Colors.white,
+                                  hintText: "Age",
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(50),
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
+                          SizedBox(
+                            width: 160,
+                            child: ListTile(
+                              title: Text('Sex'),
+                              subtitle: TextField(
+                                controller: sex,
+                                readOnly: true,
+                                decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: Colors.white,
+                                  hintText: "Sex",
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(50),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      ListTile(
+                        title: Text('Address'),
+                        subtitle: Container(
+                          width: 290,
+                          height: 55,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.black54),
+                            color: Colors.white,
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(50),
+                            ),
+                          ),
+                          child: AddressPicker(callback: callback3),
                         ),
                       ),
                       ListTile(
@@ -299,6 +351,8 @@ class JobPostState extends ConsumerState {
                                 phone: parent.phone,
                                 childName: childName,
                                 age: int.parse(age.text),
+                                sex: sex.text,
+                                address: address,
                                 weekdays: weekdays,
                                 startTime: startTime,
                                 endTime: endTime,

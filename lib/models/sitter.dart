@@ -2,6 +2,7 @@ class Sitter {
   String? name;
   String? nid;
   String? phone;
+  String? address;
   String? password;
   String? bio;
   double? rating;
@@ -17,6 +18,7 @@ class Sitter {
     this.rating,
     this.approved,
     this.suspended,
+    this.address,
   });
 
   Map<String, dynamic> getMap() {
@@ -26,6 +28,7 @@ class Sitter {
       "phone": phone,
       "password": password,
       "bio": bio,
+      "address": address,
       "rating": rating,
       "approved": approved,
       "suspended": suspended,

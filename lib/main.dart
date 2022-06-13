@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:keeper/applicantprofile.dart';
 import 'package:keeper/home.dart';
 import 'package:keeper/initialpage.dart';
 import 'package:keeper/jobdashboard.dart';
@@ -54,6 +55,12 @@ class MyApp extends StatelessWidget {
             return MaterialPageRoute(
               builder: (context) => JobDetails(
                 job: args as Job,
+              ),
+            );
+          case '/applicantprofile':
+            return MaterialPageRoute(
+              builder: (context) => ApplicantProfile(
+                phone: args as String,
               ),
             );
           case '/jobdashboard':
