@@ -5,7 +5,7 @@ import 'package:keeper/applicantprofile.dart';
 import 'package:keeper/home.dart';
 import 'package:keeper/initialpage.dart';
 import 'package:keeper/jobdashboard.dart';
-import 'package:keeper/jobdetails.dart';
+import 'package:keeper/jobdetails/jobdetails.dart';
 import 'package:keeper/jobpost/jobpost.dart';
 import 'package:keeper/models/job.dart';
 import 'package:keeper/parentlogin.dart';
